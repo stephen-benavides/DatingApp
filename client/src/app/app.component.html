@@ -1,0 +1,20 @@
+<h1>{{title}}</h1>
+
+<h1>Looping over the json list in the server in app.component.html</h1>
+<!--
+
+    Directives:
+        1. Allows us to run angular commands 
+        2. Think of it as razor syntax (@Html. || @Scripts) to manipulate the DOM using c# 
+        3. The directive for angular is '*'
+        4. The directive for razor pages is '@'
+
+    Interpolation {{}}:
+        1. Allows us to interact with objects from the components (.components.ts)
+
+-->
+<ul>
+    <li *ngFor="let user of users">
+        UserId = {{user.id}} && UserName = {{user.userName}}
+    </li>
+</ul>
