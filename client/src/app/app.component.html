@@ -3,7 +3,7 @@
 <h1>Looping over the json list in the server in app.component.html</h1>
 <!--
 
-    Directives:
+    Directives '*':
         1. Allows us to run angular commands 
         2. Think of it as razor syntax (@Html. || @Scripts) to manipulate the DOM using c# 
         3. The directive for angular is '*'
@@ -16,5 +16,6 @@
 <ul>
     <li *ngFor="let user of users">
         UserId = {{user.id}} && UserName = {{user.userName}}
+        
     </li>
 </ul>
