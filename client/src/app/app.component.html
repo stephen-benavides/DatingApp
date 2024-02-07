@@ -1,21 +1,22 @@
-<h1>{{title}}</h1>
+<!--Add nav component in the root component-->
+<app-nav></app-nav>
 
-<h1>Looping over the json list in the server in app.component.html</h1>
-<!--
+<div class="container" style="margin-top: 100px;">
+    <app-home></app-home>
+</div>
 
-    Directives '*':
-        1. Allows us to run angular commands 
-        2. Think of it as razor syntax (@Html. || @Scripts) to manipulate the DOM using c# 
-        3. The directive for angular is '*'
-        4. The directive for razor pages is '@'
 
-    Interpolation {{}}:
-        1. Allows us to interact with objects from the components (.components.ts)
+
+
+
+
+<!-- 
+    STUDY NOTES 
+    - Additional Notes in nav.component.html
+    - The app.component elements are used for the the SPA architecture, all the components are supposed to be here. 
+    - The .ts of the app component has the main services we are going to be implementing
+    - The app.module.ts is the root component and it has all the packages, imports, etc that we are going to be using throughout the application
+    - You invoke the components using the <>/<> tag, it should provide the available components when you open the statement 
+        i.e. <app-nav></app-nav>
 
 -->
-<ul>
-    <li *ngFor="let user of users">
-        UserId = {{user.id}} && UserName = {{user.userName}}
-        
-    </li>
-</ul>

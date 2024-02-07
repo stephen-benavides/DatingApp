@@ -1,0 +1,106 @@
+<div class="container mt-5" >
+    <!-- Initial Home Page Message with Registration Buttons -->
+    <div style="text-align: center;"  *ngIf="!registerMode">
+        <h1>Find Your Match!</h1>
+        <p class="lead">Come on in to view your matches... all you need to do is sign up</p>
+        <div class="text-center">
+            <!-- me-2 bootstrap margin end -2  -->
+            <!-- when hitting register button, hide this menu and open the registerMode -->
+            <button class="btn btn-primary btn-lg me-2" (click)="toggleRegisterMode()">Register</button> 
+            <button class="btn btn-primary btn-lg btn-info">Learn more</button> 
+        </div>
+    </div>
+
+    <!-- When user hits the register button display this  -->
+    <div class="container" *ngIf="registerMode">
+        <div class="row justify-content-center">
+            <div class="col-4">
+                <!-- Register Component
+                    - Using Input Properties => [usersFomHomeController] => not needed (more info on register.component.ts)
+						<app-register [usersFomHomeController]="users"></app-register>
+                    - Using Output Proerties => (cancelRegister)
+                        1. To pass the parameter, it must have the same name as the one in home
+                        2. BUT it also must have $ at the beggining, else it wont work 
+                        3. $event
+                -->
+                <!--	not needed (more info on register.component.ts). No as we do not need to pass users into our form
+					<app-register [usersFomHomeController]="users" (cancelRegister)="cancelRegisterMode($event)"></app-register> -->
+                <app-register (cancelRegister)="cancelRegisterMode($event)"></app-register>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!--
+    STUDY NOTES
+    Parent to Child Communication
+        @Input Property => []
+        0. Input, when invoking them, uses square brackets []
+	    1. To pass data from a parent page to a child page 
+	    2. In this case from the Home page to the register page 
+	    3. To do this you most do the following:
+	    	1. Go to the component where you want to add the data to, in this case the register.component.ts
+	    		1. Add the property @Input() [name]: [type]
+	    			1. @Input() usersFomHomeController: any;
+	    		2. Now our register component is awaiting data from the home component 
+	    	2. In the home component.ts
+	    		1. You must have ready the data that you want to pass to the register component
+	    		2. The value that you must pass needs to be stored in a property to manipulate it 
+	    		3. In this case users:any and the this.getUsers() method is running on ngOnInit() in the home.component.ts 
+	    	3. In the home.component.html 
+	    		1. Check for the instance of the register component that is initialized
+	    			1. <app-register></app-register>
+	    		2. Inside the component call, within []. Add the @Input() property to initialized in register.component.ts  
+	    			1. <app-register [usersFomHomeController]="users" ></app-register>
+	    			2. "users" indicates the property that has all the information that you want to pass from the parent to the child 
+	    			3. users Home component => to Register component 
+	    	4. Now you can use the input however you want, it is stored within [usersFomHomeController]
+
+
+    Child to Parent Communication
+        @Output Property => ()
+        0. Output, when invoking them, uses parenthesis ()
+    	1. Use to pass information from the child to the parent
+    	2. In this case from the register component to the home component 
+    	3. Scenario: When hitting the cancel button, hide the registration div in the home component 
+    	4. How to do it: 
+    		1. In the register.component.html 
+    			1. Configure button whose action is to 'cancel'
+    		2. In register.component.ts 
+    			1. Create a new property @Output 
+    				1. It is a declaration, same a @Input 
+    				2. Needs to be instantiated as a type of EventEmitter()
+    				3. @Output() cancelRegister = new EventEmitter();
+    			2. In the cancel method 
+    				1. Invoke the cancelRegister property and call the emit method 
+    				2. emit() takes any type of parameters 
+    				3.  this.cancelRegister.emit(false);
+    					1. In this case, it is false because the property that will consume this output takes boolean 
+    		3. In home.component.ts (the parent that will consume the output from the child) 
+    			1. Create a new method with a parameter that will change the elements that you want 
+    			2. cancelRegisterMode(event: boolean){
+    					this.registerMode = event;
+    				}
+    			3. In this case It will update the registerMode property, 
+    			which is in charge of hiding the register form and displaying the home welcome div 
+    		4. In home.component.html
+    			1. Inside the component that you are listening the info from 
+    			2. <app-register></app-register>
+    			3. Add the {name of the output variable in the child page} and set it to be equal to 
+    			the method in the parent page 
+    			4. <app-register [usersFomHomeController]="users" (cancelRegister)="cancelRegisterMode($event)"></app-register>
+    				1. NOTE: 
+    					1. Although the parameter in home.component.ts is cancelRegisterMode(event : boolean)
+    					2. When invoking it in home.component.html, you must use the same name of the parameter and add '$' in its name, otherwise it won't work 
+    					3. cancelRegisterMode($event)
+
+    Input AND Output 
+        1. This is why when doing input and output operation in the same property we use '[()]'
+        2. Also known as Data Routing 
+        Data Routing [(ngModel)]:
+            => Data Routing 
+            => 2 way binding 
+            => get the value in the component to the HTML and from the HTML to the component 
+
+-->

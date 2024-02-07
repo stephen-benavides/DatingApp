@@ -47,7 +47,7 @@ public static class ApplicationServicesExtensions
         {
             options.TokenValidationParameters = new TokenValidationParameters(){
                 /*List of all thhe rules our service will use to authenticate the JWT token */
-
+                    
                 //Our service will check the token key and make sure is valid - token has been signed by the issuer 
                 ValidateIssuerSigningKey = true,
                 //Check the issuer's key (our key) is the same that the one that we are retrieving from the JWT 

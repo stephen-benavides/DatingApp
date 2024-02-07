@@ -1,0 +1,134 @@
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <div class="container"> 
+      <a class="navbar-brand" href="#">Dating App</a>
+      <!-- Structural directive *: 
+      if the property loggedIn in nav.component is true, then show this div, else remove it from DOM -->
+      <!-- THIS USES THE OLD WAY 'loggedIn boolean' <ul class="navbar-nav me-auto mb-2 mb-md-0" *ngIf="loggedIn"> -->
+      <!-- Using the ASYNC Pipe (RxJS) ( resource | async) - to unsubscribe automatically from the service when logged in-->
+      <ul class="navbar-nav me-auto mb-2 mb-md-0" *ngIf="currentUser$ | async"> 
+        <li class="nav-item">
+          <a class="nav-link" href="#">Matches</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Lists</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" >Messages</a>
+        </li>
+      </ul>
+
+      <!-- Drop down menu with additional functionality if the user is logged in -->
+      <div  class="dropdown" *ngIf="currentUser$ | async" dropdown>
+        <a id="welcomeButton" class="dropdown-toggle text-light text-decoration" dropdownToggle>Welcome user!</a>
+        <div class="dropdown-menu" *dropdownMenu>
+          <a  class="dropdown-item">Edit Profile</a>
+          <a href="#" class="dropdown-item" (click)="logout()">Logout</a>
+        </div>
+      </div>
+      <!-- #loginForm="ngForm" - Template(.html) Reference Variable - to the component for the usage of the form. It makes a regular form into an angular form-->
+      <!-- invoking the login function on form submission -->
+      <!-- Hide the form if the user is logged in -->
+      <form #loginForm="ngForm" class="d-flex" (ngSubmit)="login()" autocomplete="off" *ngIf="!(currentUser$ | async)">  
+        <!-- name - name of the input tracks the name bound to the directive, to be use anyewhere else in JS//TS. NG binds this name to the form to use it throughout -->
+        <!-- [(ngModel)] - routing directive that allows for 2 way binding "[()]" with our form, which makes angular so powerful. Always initialize the property used in your directives -->
+        <!-- these 2 are requiered to bind an element to an angular form -->
+        <input 
+            name="username"
+            [(ngModel)]="model.username"
+            class="form-control me-2" 
+            type="text" 
+            placeholder="Username">
+        <input name="password" [(ngModel)]="model.password" class="form-control me-2" type="password" placeholder="Password" >
+        <button class="btn btn-outline-success" type="submit">Login</button>
+      </form>
+    </div>
+</nav>
+
+
+<!-- Study Notes 
+  Converting Form To angular Form 
+    1. Use Reference Vairbales
+      Set the #loginForm="ngForm" 
+      This indicates our form is an angular form 
+        - loginForm :ngForm => login form is of type ngForm (directive like)
+    2. Map the object to our component by using name
+      name = "username"
+      This allows us to use our component anywhere by referencing its name 
+    3. Stablish 2 way binding 
+      [(ngModel)] = "model.username"
+      To show data to and to set data from an angular form to our component model 
+      - The app routing must be implemented in the root component 
+        1. app.module.ts 
+        2. imports 
+        3. AppRoutingModule
+        4. In Imports => import { AppRoutingModule } from './app-routing.module';
+
+
+  Angular Structural Directives (*)
+    1. Allows us to run angular commands 
+    2. Think of it as razor syntax (@Html. || @Scripts) to manipulate the DOM using c# 
+    3. The directive for angular is '*'
+    4. The directive for razor pages is '@'
+    5. To use in angular to set conditions 
+    6. *ngIf 
+    7. It completely removes the object from the DOM, it is not hidden. If the conditions are not met (not on debug => elements)
+    8. HERE: If the user is not logged in, then hide all links in the nav bar
+
+    9. IF YOU WANT TO HIDE INSTEAD OF REMOVING 
+      1. Instead of the structural directive use the [hidden] event 
+      2. [hidden] = condition**
+      3. [hidden] = loggedIn ==true 
+    10. Example of enhance for loop using angular directives 
+      i.e <li *ngFor="let user of users"> 
+            UserId = {{user.id}} && UserName = {{user.userName}}
+          </li>
+        1. From the app.component.ts > Get Users
+          1. Stores the value of the response in a property named 'user' which we got access to in the component.html as it is not private 
+          2. The .is and .userName must be same name as the one comming from the server (JSON), else it won't work 
+
+
+
+  Angular Elements Type 
+    Interpolation {{}}:
+      1. Allows us to interact with objects from the components (.components.ts)
+      2. {{title}} OR {{user.Username}} -> 
+      3. Take an element stored in a component and pass it to the HTML 
+      4. 1 way binding
+      5. Calling a property 
+
+    Data Routing [(ngModel)]:
+      => Data Routing 
+      => 2 way binding 
+      => get the value in the component to the HTML and from the HTML to the component 
+
+    (event) or (click) or (submit)
+      => JS inline function invocation
+      => Rather that setting an event listener to call a function based on some action
+      => the event is mapped directly 
+
+
+    Drop Down Menu 
+      1. dropdown, dropdownToggle, *dropdownMenu (the * indicates that this an angular directive and that it will manipulate/overrite the DOM)
+      2. The are all comming from bootstrap ng (https://valor-software.com/ngx-bootstrap/#/components/dropdowns?tab=overview#anchor-trigger)
+      3. This is a trigger by <a> (left side menu in the above website)
+      4. On top of the page there are 3 menus: Overview , API, Examples 
+      5. To install this functionality go to API and follow the steps 
+      6. Make sure you are using the right version of angular
+      7. Check Compatibility Here: https://valor-software.com/ngx-bootstrap/#/documentation
+
+
+
+    Async Pipe (resource | async)
+      1. Used to unsubscribe from a service automatically 
+      2. In the ng directive, invoke the resource that is being observed 
+      3. Use the '| async' keyword next to it
+      4. <form #loginForm="ngForm" class="d-flex" (ngSubmit)="login()" autocomplete="off" *ngIf="!loggedIn">  
+          1. If the user is noot logged in, do not display the controls (old WAY)
+          2. In the new way, by using the pipe it shuold look like this 
+            - <form #loginForm="ngForm" class="d-flex" (ngSubmit)="login()" autocomplete="off" *ngIf="!(currentUser$ | async)">  
+      5. If you change the constructor access modifier from private to public, you can bypass using another property
+              constructor(private accountService: AccountService){ 
+          1. Instead of currentUser$ | async it will be 
+                this.accountService.currentUser$ | async
+ -->
+

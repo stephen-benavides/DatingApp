@@ -1,0 +1,43 @@
+<form #registerForm="ngForm" (ngSubmit)="register()" autocomplete="off">
+    <h2 class="text-center text-primary">Sign Up</h2>
+    <!-- Blank Space -->
+    <hr>
+    <!-- User Input Form -->
+    <div class="mb-3">
+        <!-- Username Input -->
+        <input
+            [(ngModel)]="model.username" 
+            name="username"
+            type="text" 
+            class="form-control"
+            placeholder="Username"
+        >
+
+        <!-- Pass the list of users from the home component (parent to child) -->
+        <!-- drop down menu -->
+        <!-- not needed (more info on register.component.ts). No as we do not need to pass users into our form 
+            <div class="mb-3">
+            <label>Who is your favorite user?</label>
+            <select class="form-select">
+                <option *ngFor="let user of usersFomHomeController" [value]="user.userName">
+                {{user.userName}}
+                </option>
+            </select>
+        </div> -->
+        
+
+        <!-- Password Input -->
+        <input
+            [(ngModel)]="model.password" 
+            name="password"
+            type="password" 
+            class="form-control"
+            placeholder="Password"
+        >
+    </div>
+    <div class="text-center">
+        <button type="submit" class="btn btn-success me-2">Register</button>
+        <button type="button" (click)="cancel()" class="btn btn-default">Cancel</button>
+    </div>
+</form>
+
