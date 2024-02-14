@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AccountService } from '../_service/account.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-register',
@@ -18,7 +19,6 @@ export class RegisterComponent implements OnInit {
     - Parent to Child Communication
     - More Information on home.component.html => Study Notes
     
-
     @Input() usersFomHomeController: any;
    */
   
@@ -34,13 +34,15 @@ export class RegisterComponent implements OnInit {
 
   //ctor
   //Inject the service so you can use it in this register component 
-  constructor(private accountService : AccountService) {  
+  //Injecting ToastrService to display messages to the user 
+  constructor(private accountService : AccountService, private toastr: ToastrService) {  
   }
   
   ngOnInit(): void {
   }
 
   //When user hits register
+  //public void Register()
   public register(){
     // console.log(this.model); //DEBUG
     //us the register service to register the user that is passed to the model (observable)
@@ -56,6 +58,8 @@ export class RegisterComponent implements OnInit {
       },
       error: (error) => {
         console.log(error);
+        this.toastr.error(error.error);
+      
       }
     })
   }

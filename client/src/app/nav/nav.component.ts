@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { AccountService } from '../_service/account.service';
 import { Observable, of } from 'rxjs';
 import { User } from '../_models/User';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-nav',
@@ -34,8 +36,10 @@ export class NavComponent implements OnInit{
   /* CONSTRUCTOR */
 
   //Injecting the account.services.ts for login 
+  //Injecting the router, it comes from the app-routing.module by default if active in your project 
+  //Injecting Toastr Service, to display messages to the client based on actions 
   //private AccountService account 
-  constructor(private accountService: AccountService){
+  constructor(private accountService: AccountService, private routing: Router, private toastr: ToastrService){
       //Initializing currentUser$ to the one from the service so we can use it in the HTML site (nav.component.HTML) 
       this.currentUser$ = this.accountService.currentUser$;
   }
@@ -76,12 +80,22 @@ export class NavComponent implements OnInit{
     // console.log(this.model);
     //Use the login from the account service and subscribe (arrow functions)
     this.accountService.login(this.model).subscribe({
-      next: response => {
+      next: response => { //if response variable not needed ()=>{} OR _ => {} //'_' means empty, not needed but its a standard 
           console.log(response); //this should return the username and the tokkenPassowrd from the server if the user exists and the password was successfully salted
           //this.loggedIn = true; //user is logged in - //Not needed as async pipe takes care of it (unsubscribing)
+
+          /*
+            Angular Routing 
+            1. When the user logs in, and is successful, then re-route to another component 
+            2. The component name is based on the component path registered on app-routing.module.ts 
+            3. Always add "/"
+           */
+          this.routing.navigateByUrl("/members")
       },
       error: errorResponse => { //()=>{}
         console.log(errorResponse);
+        //Display the error message to the user 
+        this.toastr.error(errorResponse.error);
       },
 
     })
@@ -93,6 +107,13 @@ export class NavComponent implements OnInit{
     //remove user from local storage
     this.accountService.logout();
     //this.loggedIn = false; //Not needed as async pipe takes care of it (unsubscribing)
+
+    /*
+    Re routing to home page when the user logs out 
+      1. "/" makes it go to the base of the page
+      2. The initial is set as home page in app-routing.module.ts 
+     */    
+    this.routing.navigateByUrl("/");
   }
 }
 
@@ -157,4 +178,29 @@ export class NavComponent implements OnInit{
           constructor(public accountService: AccountService){ 
 */
 
+
+
+
+/*
+  ROUTING 
+  1. Routing as service, which is enabled when you have select 'Y' on routing during project creation 
+  2. Routing is use to move between components without having to navigate through different buttons 
+  3. More notes about this type of routing on: 
+      1. app-routing.module.ts
+      2. nav.component.html (setting route on nav links)
+  2. Steps to enable routin IN-Code (this code)
+    1. Inject the router service in the constructor 
+        1. (private routing: Router)
+    2. invoke the property on the code you want to implement it 
+      1. Here is implemented on login()
+      2. When the user hits login, and its successful. Then, re-route it to the member component
+      3. After Subscribing to the service => On Next() => this.routing.navigateByUrl("/members")
+      4. You MUST ALWAYS add '/' in the path, as it takes the absolute value, to make it user to navigate 
+      5. the "/members" comes from the path registered on app-routing.module.ts 
+      6. If you only set "/" in this.routing.navigateByUrl("/") you will go back to the initial page set in your app-routing.module.ts 
+        1. app-routing.mdoule.ts
+            1. //Empty route that routes back to the home page => https://localhost:4200/
+                {path: '', component: HomeComponent},
+
+*/
 //#endregion

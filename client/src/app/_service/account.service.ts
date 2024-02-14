@@ -84,6 +84,7 @@ export class AccountService {
             */
             this.currentUserSource.next(user);
           }
+          return user;
         })
       )
   }
@@ -132,7 +133,7 @@ export class AccountService {
               On this component we do not need this information that is returned, so commenting out
            */
           //#endregion
-          //return user; //Commenting out, explation inside region 
+          //return user; //Commenting out, explanation inside region above 
       })
     );
   }

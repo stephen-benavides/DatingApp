@@ -2,7 +2,9 @@
 <app-nav></app-nav>
 
 <div class="container" style="margin-top: 100px;">
-    <app-home></app-home>
+    <!--Replacing with the routing directive to activate routing, check Study Notes => app-routing.module.ts  
+        <app-home></app-home> -->
+    <router-outlet></router-outlet>
 </div>
 
 
@@ -18,5 +20,13 @@
     - The app.module.ts is the root component and it has all the packages, imports, etc that we are going to be using throughout the application
     - You invoke the components using the <>/<> tag, it should provide the available components when you open the statement 
         i.e. <app-nav></app-nav>
+
+
+    STUDY NOTES - Routing 
+        1. <router-outlet></router-outlet> can replace the <app-home></app-home> 
+        2. Because in the routing, th default is the home component in app-routing.module.ts 
+        3. Thus, it is working as expected 
+        4.  //Empty route that routes back to the home page => https://localhost:4200/
+            {path: '', component: HomeComponent},
 
 -->

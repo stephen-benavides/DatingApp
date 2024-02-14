@@ -1,25 +1,33 @@
-<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+<nav class="navbar navbar-expand-md navbar-dark fixed-top bg-primary">
     <div class="container"> 
-      <a class="navbar-brand" href="#">Dating App</a>
+      <a class="navbar-brand" routerLink="/home" routerLinkActive="active">Dating App</a>
       <!-- Structural directive *: 
       if the property loggedIn in nav.component is true, then show this div, else remove it from DOM -->
       <!-- THIS USES THE OLD WAY 'loggedIn boolean' <ul class="navbar-nav me-auto mb-2 mb-md-0" *ngIf="loggedIn"> -->
       <!-- Using the ASYNC Pipe (RxJS) ( resource | async) - to unsubscribe automatically from the service when logged in-->
-      <ul class="navbar-nav me-auto mb-2 mb-md-0" *ngIf="currentUser$ | async"> 
-        <li class="nav-item">
-          <a class="nav-link" href="#">Matches</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Lists</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" >Messages</a>
-        </li>
-      </ul>
+      <!-- [NOT LONGER THE CASE]Removing directive: *ngIf="currentUser$ | async" on this UL, to test app/_guards/authGuard -->
+      <!-- Setting NG-CONTAINER to host the ul, this is better approach because ng container removes the element from the DOM -->
+      <ng-container *ngIf="currentUser$ | async">
+        <ul class="navbar-nav me-auto mb-2 mb-md-0" > 
+          <li class="nav-item">
+            <!-- routerLink GOTO => STUDY NOTES (On this page) -->
+            <!-- routerLinkActive GOTO => STUDY NOTES (On this page) -->
+            <a class="nav-link" routerLink="/members" routerLinkActive="active">Matches</a> 
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/lists" routerLinkActive="active">Lists</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/messages" routerLinkActive="active">Messages</a>
+          </li>
+        </ul>
+      </ng-container>
 
       <!-- Drop down menu with additional functionality if the user is logged in -->
-      <div  class="dropdown" *ngIf="currentUser$ | async" dropdown>
-        <a id="welcomeButton" class="dropdown-toggle text-light text-decoration" dropdownToggle>Welcome user!</a>
+      <!-- Surrounding observable object with an alias, which can be used for all the children of the container, it can be used by using interpolation {{}} -->
+      <!-- Setting a pipe '|' to provide more functionality, in this case, titlecase: which set the initial letter to uppercase -->
+      <div  class="dropdown" *ngIf="(currentUser$ | async) as user" dropdown>
+        <a id="welcomeButton" class="dropdown-toggle text-light text-decoration" dropdownToggle>Welcome {{user.username | titlecase}}</a>
         <div class="dropdown-menu" *dropdownMenu>
           <a  class="dropdown-item">Edit Profile</a>
           <a href="#" class="dropdown-item" (click)="logout()">Logout</a>
@@ -39,7 +47,7 @@
             type="text" 
             placeholder="Username">
         <input name="password" [(ngModel)]="model.password" class="form-control me-2" type="password" placeholder="Password" >
-        <button class="btn btn-outline-success" type="submit">Login</button>
+        <button class="btn btn-success" type="submit">Login</button>
       </form>
     </div>
 </nav>
@@ -130,5 +138,24 @@
               constructor(private accountService: AccountService){ 
           1. Instead of currentUser$ | async it will be 
                 this.accountService.currentUser$ | async
+
+
+STUDY NOTES - ROUTING 
+  1. routerLink
+    1. Similar to ActionLink from ASP.NET MVC 
+      1. Which allows to re troute when the user hits on a link to another page within the same MVC page 
+    2. It belongs to angular routing 
+    3. Requieres routing to be active 
+    4. You must have the '/' in the name 
+      1. <a class="nav-link" routerLink="/lists" >Lists</a>
+    5. The path comes from the one set up in app-routing.module.ts 
+      1. //To display lists => => https://localhost:4200/lists
+        {path: 'lists', component: ListsComponent},
+
+  2. routerLinkActive = "active"
+    1. routerLinkActive is an angular property 
+      1. It manipulates the bahavior of the current active menu or the route where you currently are 
+    2. 'Active' is a bootstrap class, you can create your own class 
+      1. In this case, this class highlights the active route
  -->
 
