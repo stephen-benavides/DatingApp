@@ -1,0 +1,18 @@
+<ng-container>
+    
+    <button class="btn btn-primary btn-lg me-2" (click)="get401Secret()">GetSecret 401Error</button>
+    <button class="btn btn-primary btn-lg me-2" (click)="get404ErrorNotFound()">GetNotFound 404Error</button>
+    <button class="btn btn-primary btn-lg me-2" (click)="get500ServerError()">GetServerError 500Error</button>
+    <button class="btn btn-primary btn-lg me-2" (click)="get400BadRequest()">GetBadRequest 400Error</button>
+    <button class="btn btn-primary btn-lg me-2" (click)="get400ValidationError()">GetFormValidationError 400Error</button>
+
+    <div class="row mt-5" *ngIf="arrValidationErrors.length > 0">
+        <ul class="text-danger">
+            <li *ngFor="let error of arrValidationErrors">
+                {{error}}
+            </li>
+        </ul>
+    </div>
+
+</ng-container>
+    

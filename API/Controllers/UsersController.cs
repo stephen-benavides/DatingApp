@@ -39,4 +39,9 @@ public class UsersController : BaseApiController
         return await _context.Users.FindAsync(id);
     }
     
+
+    /* STUDY NOTES
+        [AllowAnonymous] bypasses authorization statements. 
+        If you combine [AllowAnonymous] and an [Authorize] attribute, the [Authorize] attributes are ignored.
+    */
 }

@@ -30,4 +30,9 @@ export class SharedModule { }
       1. In this case, it will be all of them 
       2. you do not need to specify "forRoot()" in the exports 
       3. you need to create the exports array and pass the name of the modules you want to use in your parent module
+
+    Creating a new Module using "--flat" 
+      1. Usually, it will create a new folder besides the one you are inputting in the CLI 
+      2. To avoid the creation of any new folders that you might not want when generating a new angular object, use the --flat flag 
+        1. $ ng g m _modules/shared --flat
 */

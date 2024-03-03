@@ -1,6 +1,7 @@
 using API.Data;
 using Microsoft.EntityFrameworkCore;
 using API.Extensions;
+using API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,11 +14,14 @@ builder.Services.AddDbContext<DataContext>(opt =>
     opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-//Adding Custom Services 
+//Adding Custom Services (API/Externsions/ApplicationServicesExtensions)
 builder.Services.AddCustomApplicationServices(builder.Configuration);
 
 /*** MIDDLEWARE AREA AFTER BUILDING THE SERVICES ******/
 var app = builder.Build();
+
+//Adding the exception middleware to handle any errors during execution 
+app.UseMiddleware<ExceptionMiddleware>();
 
 /*Middleware needs to be installed in a particular order, else there can be potential issues */
     /*Adding cross domain requests

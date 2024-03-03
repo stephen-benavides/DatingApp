@@ -11,12 +11,12 @@ using API.DTO;
 using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers;
-public class Account : BaseApiController
+public class AccountController : BaseApiController
 {
     private readonly DataContext _dataContext;
     private readonly ITokenService _tokenService;
 
-    public Account(DataContext dataContext, ITokenService tokenService)
+    public AccountController(DataContext dataContext, ITokenService tokenService)
     {
         this._dataContext = dataContext;
         this._tokenService = tokenService;

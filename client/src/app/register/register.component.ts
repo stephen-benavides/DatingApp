@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { AccountService } from '../_service/account.service';
 import { ToastrService } from 'ngx-toastr';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -55,6 +56,7 @@ export class RegisterComponent implements OnInit {
         
         //close register form after completion
         this.cancel();
+
       },
       error: (error) => {
         console.log(error);

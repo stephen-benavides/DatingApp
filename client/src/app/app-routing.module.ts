@@ -6,14 +6,18 @@ import { MemberDetailComponent } from './members/member-detail/member-detail.com
 import { MessagesComponent } from './messages/messages.component';
 import { ListsComponent } from './lists/lists.component';
 import { authGuard } from './_guards/auth.guard';
+import { TestErrorComponent } from './errors/test-error/test-error.component';
+import { ServerErrorComponent } from './errors/server-error/server-error.component';
+import { NotFoundComponent } from './errors/not-found/not-found.component';
 
 const routes: Routes = [
   /*
     Set the path of the routes - GOTO => STUDY NOTES
     
    */
-  //Empty route that routes back to the home page => https://localhost:4200/
+  //Empty route ("" OR "/") that routes back to the home page => https://localhost:4200/
   {path: '', component: HomeComponent},
+  //Path protected by authGuard (custom => GOTO: _guards/auth.guard for more info AND STUDY NOTES BELOW)
   {path: '',
       runGuardsAndResolvers: 'always',
       canActivate: [authGuard],
@@ -29,6 +33,13 @@ const routes: Routes = [
         {path: 'lists', component: ListsComponent},
       ]
   },
+  //Path to our error component to test errors
+  {path: 'errors', component: TestErrorComponent},
+  //path to our server and not-found errors 
+  {path: 'server-error', component: ServerErrorComponent},
+  {path: 'not-found', component: NotFoundComponent},
+
+
   //Wild Card Route: 
     //If invalid route, redirect to the home component => https://localhost:4200/afsdfsdf
   {path: "**", component: HomeComponent, pathMatch: "full"}

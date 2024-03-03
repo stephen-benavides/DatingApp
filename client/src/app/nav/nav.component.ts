@@ -94,8 +94,12 @@ export class NavComponent implements OnInit{
       },
       error: errorResponse => { //()=>{}
         console.log(errorResponse);
-        //Display the error message to the user 
-        this.toastr.error(errorResponse.error);
+        /*HANDLED BY GOTO => _interceptors/error.interceptors.ts 
+          - We do not need to throw this particular error back, as it is already handled by the interceptor, else would be duplicate
+          
+          //Display the error message to the user 
+          this.toastr.error(errorResponse.error);
+        */
       },
 
     })

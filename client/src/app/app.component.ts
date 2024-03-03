@@ -24,6 +24,8 @@ export class AppComponent implements OnInit{
 
   //Methods 
   //public void ngOnInit()
+  // As soon as the application is running, execute these methods to get the user information in the client's local storage to store in the service 
+  //SERVICES until the application is no longer running, so we can use this throughout the APP
   ngOnInit(): void {
     this.getUsers();
     //If we have an user in local storage, then get it when refreshing the page 

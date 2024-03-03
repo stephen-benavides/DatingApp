@@ -6,9 +6,9 @@
       <!-- THIS USES THE OLD WAY 'loggedIn boolean' <ul class="navbar-nav me-auto mb-2 mb-md-0" *ngIf="loggedIn"> -->
       <!-- Using the ASYNC Pipe (RxJS) ( resource | async) - to unsubscribe automatically from the service when logged in-->
       <!-- [NOT LONGER THE CASE]Removing directive: *ngIf="currentUser$ | async" on this UL, to test app/_guards/authGuard -->
-      <!-- Setting NG-CONTAINER to host the ul, this is better approach because ng container removes the element from the DOM -->
-      <ng-container *ngIf="currentUser$ | async">
-        <ul class="navbar-nav me-auto mb-2 mb-md-0" > 
+      <!-- Setting NG-CONTAINER to host the ul, previously it was 'DIV'. This is better approach because ng container removes the element from the DOM -->
+      <ul class="navbar-nav me-auto mb-2 mb-md-0" > 
+        <ng-container *ngIf="currentUser$ | async">
           <li class="nav-item">
             <!-- routerLink GOTO => STUDY NOTES (On this page) -->
             <!-- routerLinkActive GOTO => STUDY NOTES (On this page) -->
@@ -20,8 +20,12 @@
           <li class="nav-item">
             <a class="nav-link" routerLink="/messages" routerLinkActive="active">Messages</a>
           </li>
-        </ul>
-      </ng-container>
+        </ng-container>
+        <!-- Adding a new list item outside the unordered list so we do not need to check if user is logged in -->
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/errors">Errors</a>
+        </li>
+      </ul>      
 
       <!-- Drop down menu with additional functionality if the user is logged in -->
       <!-- Surrounding observable object with an alias, which can be used for all the children of the container, it can be used by using interpolation {{}} -->
@@ -141,7 +145,8 @@
 
 
 STUDY NOTES - ROUTING 
-  1. routerLink
+  1. 
+  
     1. Similar to ActionLink from ASP.NET MVC 
       1. Which allows to re troute when the user hits on a link to another page within the same MVC page 
     2. It belongs to angular routing 
