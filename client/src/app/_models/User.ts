@@ -10,7 +10,7 @@ export interface User{
 }
 
 
-/*STUDY NOTES
+/*STUDY NOTES - NG Interfaces, which are like C# models to store objects 
     INTERFACES 
         1. In Angular interfaces are MODELS objects (c#)
         2. You can create this by setting manually a new file into the created folder 

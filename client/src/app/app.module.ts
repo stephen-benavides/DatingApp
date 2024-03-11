@@ -1,12 +1,11 @@
-import { NgModule } from '@angular/core';
+/* Any new additions, libraries, and components, must be imported and declared in app.module.ts  */
+import { NgModule } from '@angular/core'; //needed for interpolation. appRouting [(ngModel)] 
 import { BrowserModule } from '@angular/platform-browser';
-import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
-
-
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http'; //Needed for HTTP requests and responses handeling 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { FormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; //Added for ng bootstrap
+import { FormsModule } from '@angular/forms'; //Added for angular forms 
 import { NavComponent } from './nav/nav.component';
 import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './register/register.component';
@@ -61,7 +60,7 @@ export class AppModule { }
 
 
 /*
-  Study Notes 
+  Study Notes - Explanation on Angular Root Module
     1. This is the root node 
     2. Everything depends on root to allow for SPA functionality 
     3. We added the following imports which already exist in NG but requiere to be explicetely invoked to use

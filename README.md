@@ -20,9 +20,11 @@ This application is developed with a range of technologies making it robust and 
 - **Jason Web Tokens (JWT)**
 - **Dependency Injection**
 - **Cross-Origin Resource Sharing (CORS)**
+- **RxJS**
 - **Bootstrap**
 - **Middleware** to catch and handle all exceptions in server and client side
 - **Toastr** for non-blocking notifications
+- **AutoMapper**
 
 ### Development Tools
 - **Environment:** Linux Ubuntu

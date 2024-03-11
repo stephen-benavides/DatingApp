@@ -149,7 +149,7 @@ export class AccountService {
 
 
 
-//#region Study Notes
+//#region Study Notes - Implementation of NG SERVICES - to be used throughout the live of the NG application
 /* 
     Services Notes 
     1. Services are global and affect the entire application 

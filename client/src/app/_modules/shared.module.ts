@@ -20,7 +20,7 @@ import { ToastrModule } from 'ngx-toastr';
 export class SharedModule { }
 
 
-/* STUDY NOTES
+/* STUDY NOTES - Usage of share modules to clean NG code 
 
   Share Modules 
     1. Use to clean up your code 

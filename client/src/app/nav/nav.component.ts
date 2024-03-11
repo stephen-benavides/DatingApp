@@ -121,7 +121,7 @@ export class NavComponent implements OnInit{
   }
 }
 
-//#region Study Notes 
+//#region Study Notes - Creation of NG components 
 
   /*
     Creating Components
@@ -161,7 +161,7 @@ export class NavComponent implements OnInit{
 
 
 /*
-  SUBSCRIPTIONS
+  STUDY NOTES - SUBSCRIPTIONS (RxJS, Pipeline, HTTP REQUESTS) 
   - When subscribing to something you should always unsubscribe to it as well 
   - When you are subscribing to an HTTP request, there isnt much of an issue, as the http request ends. 
     It does not take additional resources so there isnt any issues
@@ -186,7 +186,7 @@ export class NavComponent implements OnInit{
 
 
 /*
-  ROUTING 
+  STUDY NOTES - ROUTING in NG
   1. Routing as service, which is enabled when you have select 'Y' on routing during project creation 
   2. Routing is use to move between components without having to navigate through different buttons 
   3. More notes about this type of routing on: 

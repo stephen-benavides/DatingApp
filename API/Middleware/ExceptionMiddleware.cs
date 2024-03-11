@@ -47,7 +47,7 @@ public class ExceptionMiddleware
     }
 
     /*
-        STUDY NOTES
+        STUDY NOTES - Middleware to catch all the errors/exceptions at the hhighest levels
             1. This is use as a middle ware to catch all the exceptions at the highest levels 
             2. By setting the try/catch block here, we avoid having to set the try/catch block on each individual controller 
             3. Implementation

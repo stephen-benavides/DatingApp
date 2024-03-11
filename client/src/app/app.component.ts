@@ -65,3 +65,9 @@ export class AppComponent implements OnInit{
     this.accountService.setCurrentUser(user);
   }
 }
+
+/*STUDY NOTES - Setting the current User from Local Storage in the browser 
+
+  - Main Component that run as soon as the application starts
+
+*/

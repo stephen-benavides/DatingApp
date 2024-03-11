@@ -11,7 +11,7 @@ public class RegisterDto
     public string Password { get; set; }
     
 
-    /* STUDY NOTES
+    /* STUDY NOTES - User DTO that handles client communication without exposing the DATA classes, uses DataModel convention attributes
         You can set validation before hitting the controller 
         by the parameters that is binded in the controller 
         thanks to the [ApiController] attribute implemented 

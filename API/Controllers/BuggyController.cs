@@ -75,7 +75,7 @@ public class BuggyController : BaseApiController
 }
 
 
-/* STUDY NOTES
+/* STUDY NOTES - Controller used for testing errors in our server
 Buggy Controller 
     1. works as a main repository to handle errors and exception in the code 
     2. remember to use try/catch/block if requiered

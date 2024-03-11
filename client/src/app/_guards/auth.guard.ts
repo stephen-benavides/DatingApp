@@ -26,7 +26,7 @@ export const authGuard: CanActivateFn = (route, state) => {
 
 
 /*
-  STUDY NOTES 
+  STUDY NOTES - Usage of custom authenthication guards to provide some "security" to the client application
   1. Guards are used with the following command in the CLI 
     1. ng g g --skip-tests --dry-run 
     2. You can also use the --flat to avoid creating new folders if you wish to do so 

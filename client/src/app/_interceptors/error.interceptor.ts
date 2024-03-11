@@ -87,7 +87,7 @@ export class ErrorInterceptor implements HttpInterceptor {
 }
 
 
-/* STUDY NOTES
+/* STUDY NOTES - "Error Handeling Interceptors" - Usage and implementation of interceptor to handle HTTP requests and responses 
 
   INTERCEPTORS 
     1. HTTP Interceptors in Angular are classes that implement the HttpInterceptor interface. 

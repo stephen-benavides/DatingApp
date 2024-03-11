@@ -19,7 +19,7 @@ public class ApiException
 
     
 
-    /* STUDY NOTES
+    /* STUDY NOTES - Model/class  used to store errors 
         1. This class is used to store errors 
     */
 }
