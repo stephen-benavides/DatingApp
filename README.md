@@ -22,9 +22,17 @@ This application is developed with a range of technologies making it robust and 
 - **Cross-Origin Resource Sharing (CORS)**
 - **RxJS**
 - **Bootstrap**
+- **ngx-bootstrap**
+- **Bootswatch** access to more themes to supplement bootstrap
 - **Middleware** to catch and handle all exceptions in server and client side
 - **Toastr** for non-blocking notifications
+- **Interceptors** using RxJS - to handle responses/requests to the server. Including handling of the JSON Web Tokens (JWT) to validate each request with the server, removing the need of manually adding additional headers in the request for the Bearer token validation. 
 - **AutoMapper**
+- **Animations** to provide better user experience when navigating the UI
+- **FontAwesome** 
+- **Angular Component Dev Kit (CDK)** 
+- **ngx-gallery** 3rd party photo gallery tool, to display gallery images to the client, uses StandAlone Components for its functioning
+- **ActivatedRoute** to get values from the query string / route parameters 
 
 ### Development Tools
 - **Environment:** Linux Ubuntu

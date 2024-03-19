@@ -25,8 +25,8 @@ const routes: Routes = [
           //To Display different members =>https://localhost:4200/members
           //Passing custom authGuard (/app/_guards)
         {path: 'members', component: MemberListComponent, canActivate: [authGuard]},
-        //To display details of the members '/:' - is a route parameter => https://localhost:4200/members/2
-        {path: 'members/:id', component: MemberDetailComponent},
+        //To display details of the members '/:' - is a route parameter => https://localhost:4200/members/2 OR /name
+        {path: 'members/:username', component: MemberDetailComponent},
         //To display messages => https://localhost:4200/messages
         {path: 'messages', component: MessagesComponent},
         //To display lists => => https://localhost:4200/lists

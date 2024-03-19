@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, map } from 'rxjs';
 import { User } from '../_models/User';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,7 @@ import { User } from '../_models/User';
 ///Service for handleing user login throughout the application 
 export class AccountService {
   //Base URL - string that has the location of our services in the server 
-  baseUrl: string = 'https://localhost:5001/api/';
+  baseUrl: string = environment.apiUrl;// GOTO for notes (src/environments/environment.ts) //'https://localhost:5001/api/';
 
   /*
     Creating BehaviorSubject to export the user to other components (bellow) 
@@ -181,7 +182,7 @@ export class AccountService {
       Services are always alive for the duration of the entire application, which makes them perfect for storing state. 
       But, the service does gets refreshed when the user exists the application, this means when the user hits the refresh button, the service is exited 
 
-    Persisting a Service
+    STUDY NOTES: Persisting a Service
       1. Avoiding a service getting terminated when the user exits or refreshes the page 
       2. As long as the application is alive the service is alive, but we can store the state of a service in the browser storage 
       3. Every browser has an storage but its important to only store requiered information, as it can become cumbersome for the user 
@@ -197,7 +198,7 @@ export class AccountService {
 
 
 
-    HttpClient 
+    STUDY NOTES: HttpClient 
       1. Class that is injected from the root model
       2. You need to declare it in the costructor, which will get initialized as soon as the application starts, as that is how services behave (providedIn: "root")
       3. Allows for POST PUT DELETE (RestAPI operations)
@@ -216,7 +217,7 @@ export class AccountService {
 
 
         
-    Observables 
+    STUDY NOTES: Observables 
       1. They are lazy
       2. Able to cancel 
       3. Only subscriber of the newsletter receive the newsletter 
@@ -245,7 +246,7 @@ export class AccountService {
           2. The pipe automatically unsubscribe without having us to do so manually 
       11. For HTTP requests you normally do not need to unsubscribe from observables, as an HTTP request gets automatically completed and returns a server code 
         
-    Promises
+    STUDY NOTES: Promises
       1. Similar functionality as Observables, wwith the following differences: 
         1. In a promise, wait for it to comeback 
         2. Cant be canceled 
@@ -256,7 +257,7 @@ export class AccountService {
 //#endregion
 
 
-//#region TypeScript in the Request
+//#region STUDY NOTES: TypeScript in the Request
 /*
   Previously we have been using any to handle the request, and getting a non-generic response 
   To implement Type Safety 
@@ -274,7 +275,7 @@ export class AccountService {
 //#endregion
 
 
-//#region Utilization of Observables outside of the Services using "Behavior Subject"
+//#region STUDY NOTES: Utilization of Observables outside of the Services using "Behavior Subject"
 /*
   Lets other components use this account.service to accertain that the user has logged in
   1. Using BehaviorSubject to set a variable as observable which we can export outside the service 

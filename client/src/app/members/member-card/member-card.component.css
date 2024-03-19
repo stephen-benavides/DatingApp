@@ -1,0 +1,72 @@
+/* only affect the img tag inside the .card when it is hovered over */
+.card:hover img{
+    /* as soon as the user hovers over the image, make it a bit large with the effect of wasing out and reduced opacity */
+    transform: scale(1.2, 1.2);
+    transition-duration: 500ms;
+    transition-timing-function: ease-out;
+    opacity: 0.7;
+
+}
+
+.card img{
+    /* as soon as the user is not longer hovering over the image, using the same ease out and time, se the scale to the normal position */
+    transform: scale(1.0, 1.0);
+    transition-duration: 500ms;
+    transition-timing-function: ease-out;
+}
+
+/* this is the DIV */
+.card-img-wrapper{
+    /* do not overflow on the wrapper of the image, otherwise it wont look as good, it will only increase inside the margin of the image */
+    overflow: hidden;
+    /* requiered to set relative, so the icons can be over the image */
+    position: relative;
+}
+
+.member-icons {
+    position: absolute;  /* so it can be on the top of the image, needs to be absolute, RELATIVE to the DIV(above) */
+    bottom: -30%;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 0;
+}
+/* make it so the image will display the above icons when hovered */
+.card-img-wrapper:hover .member-icons{
+    bottom:0;
+    /* tis will make the icons visible */
+    opacity: 1;
+}
+
+/*STUDY NOTES - CSS IN ANGULAR
+
+    1. angular allows the creation of "random classes/ids" that will allow the encaptulation of CSS styles inside a component to affect that component only. 
+    2. In other words: 
+        1. Any changes/additions in this .css file, will only affect this .html component (member-card.component.html) 
+    3. It is possible to override this convention but it is not advised 
+        1. Overriding conventions:
+            1. Go to the member-card.component.ts 
+            2. Inside the @Component 
+            3. Initialize a property named "encapsulation"
+                1. The end result looks like this in @Component [encapsulation: ViewEncapsulation.Emulated ]
+                2. Libraries need to be invoked : import { Component, Input, OnInit } from '@angular/core';
+            4. The types of initialization are: 
+                1. ViewEncapsulation.Emulated 
+                    1. Default behavior 
+                    2. It is like this even without initializing the variable 
+                    3. It creates an id unique to the component so the CSS will only affect this component and not others 
+                    4. In the inspector, it will look something like this, if you inspect the image
+                        1. <img _ngcontent-ng-c1907407765="" class="card-img-top" src="https://randomuser.me/api/portraits/women/50.jpg" alt="Karen">
+                        2. WHERE: _ngcontent-ng-c1907407765= IS the id created by this behavior, which makes it unique
+
+                2. ViewEncapsulation.None
+                    1. This will remove the beavior of the emulated 
+                    2. It will remove the additional ID 
+                    3. This mean, the CSS will affect all component that use the same .css 
+                    4. This is that is CSS regular behavior, as it cascades (from the name CSS)
+                    5. _ngcontent-ng-c1907407765= this is removed
+
+                3. ViewEncapsulation.ShadoDom
+
+*/

@@ -27,11 +27,11 @@ export class AppComponent implements OnInit{
   // As soon as the application is running, execute these methods to get the user information in the client's local storage to store in the service 
   //SERVICES until the application is no longer running, so we can use this throughout the APP
   ngOnInit(): void {
-    this.getUsers();
+    //this.getUsers(); no longer implementing this method in this component directly 
     //If we have an user in local storage, then get it when refreshing the page 
     this.setCurrentUser();
   }
-
+/* Not needed for this module, the users are handled by the members.service.ts
   //public void GetUser() => Transferring method in home.component.ts- Notes about Input from parent to child there
   getUsers(){
     //By just getting the element you dont do anything with the resource
@@ -42,7 +42,7 @@ export class AppComponent implements OnInit{
       complete: () => console.log('Request has completed')
     });
   }
-
+*/
   //public void SetCurrentUser()
   setCurrentUser(){
     /*

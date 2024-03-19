@@ -1,0 +1,43 @@
+<div class="card mb-4" *ngIf="member"> 
+    <!-- Only if the member is not null or undefined, then show this div -->
+
+    <!-- Using bootstrap classes for the member cards -->
+    <!-- This needs to be set to to relative in CSS, so the buttons in the list can be "inside" by setting them to absolute -->
+    <div class="card-img-wrapper">  
+        <!-- If the user does not have a photo, then display the generic photo from the assets folder -->
+        <img src="{{member.photoUrl || './assets/user.png'}}" alt="{{member.knownAs}}" class="card-img-top">
+        <!-- list to put the buttons to be displayed when the user hovers on the image -->
+        <ul class="list-inline member-icons animate text-center">
+            <li class="list-inline-item">
+                <!-- STUDY NOTES - Passing the member.userName to the data attribute for app-routing.module.ts => MemberDetailComponent(members/:username) -->
+                <button class="btn btn-primary" routerLink="/members/{{member.userName}}">
+                    <!-- using font awesome (fa) to set the icons (i) -->
+                    <i class="fa fa-user"></i>
+                </button>
+            </li>
+            <li class="list-inline-item">
+                <button class="btn btn-primary">
+                    <!-- using font awesome (fa) to set the icons (i) -->
+                    <i class="fa fa-heart"></i>
+                </button>
+            </li>
+            <li class="list-inline-item">
+                <button class="btn btn-primary">
+                    <!-- using font awesome (fa) to set the icons (i) -->
+                    <i class="fa fa-envelope"></i>
+                </button>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body p-1">
+        <h6 class="card-title text-center mb-1">
+            <!-- STUDY NOTES - i comes from "font-awesome", it is used to add icons into HTML (OneNote > Angular > Outside Import Packages)-->
+            <i class="fa fa-user me-2">
+                {{member.knownAs}}
+            </i>
+        </h6>
+        <p class="card-text text-muted text-center">
+            {{member.city}}
+        </p>
+    </div>
+</div>

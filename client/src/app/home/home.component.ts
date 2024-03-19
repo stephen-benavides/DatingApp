@@ -1,6 +1,4 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -18,14 +16,15 @@ export class HomeComponent implements OnInit {
 
   //ctor
   //Injecting HttpClient for the getUsers
-  constructor(private http: HttpClient){
+    //v2. No longer needing to inject "private http: HttpClient" in home page
+  constructor(){
 
   }
   
 
   //OnInint - needs to implement OnInit Interface
   ngOnInit(): void {
-    this.getUsers(); //For the input, you need to invoke the method you want to pass on ini 
+    //this.getUsers(); //For the input, you need to invoke the method you want to pass on ini 
   }
 
 
@@ -34,6 +33,11 @@ export class HomeComponent implements OnInit {
     //when invoked, set the property 'register mode' to the oposite of what currently is
     this.registerMode = !this.registerMode;
   }
+
+  /* NO LONGER NEEDED, IS HANDLED BY members.services.ts 
+    - Errors:
+      - It does not have the option for the bearer, as the server requieires authenthication 
+      - It is hardcoding the url from the server, it should use the environment.ts 
 
   //Passing the Users from the Home Component to the Register Component (Child)
   //public void GetUser()
@@ -46,7 +50,7 @@ export class HomeComponent implements OnInit {
       complete: () => console.log('Request has completed')
     });
   }
-
+*/
   /*
     Method to cancel the RegisterMode 
     - Set the property to false 

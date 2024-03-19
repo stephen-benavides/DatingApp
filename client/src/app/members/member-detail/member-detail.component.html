@@ -1,1 +1,104 @@
-<p>member-detail works!</p>
+<div class="row" *ngIf="member">
+    <!-- bootstrap, page with col of 4, maximum columns avaiable (12), remaning (8)-->
+    <div class="col-4">
+        <div class="card">
+            <!-- If the user has no photo, then, from the assets folder in this projejct, load the user.png -->
+            <img class="card-img-top img-thumbnail" src="{{member.photoUrl || './assets/user.png'}}" alt="{{member.knownAs}}">
+            <div class="card-body">
+                <div>
+                    <strong>Location: </strong>
+                    <p>{{member.city}}, {{member.country}}</p>
+                </div>
+                <div>
+                    <strong>Age: </strong>
+                    <p>{{member.age}}</p>
+                </div>
+                <div>
+                    <strong>Last active: </strong>
+                    <p>{{member.lastActive}}</p>
+                </div>
+                <div>
+                    <strong>Member since: </strong>
+                    <p>{{member.created}}</p>
+                </div>
+            </div>
+            <div class="card-footer">
+                <!-- make sure the buttons are in a row, and not in a column -->
+                <div class="btn-group d-flex">
+                    <button class="btn btn-primary">Like</button>
+                    <button class="btn btn-success">Messages</button>
+                </div>
+            </div>
+    
+        </div>
+    </div>
+    <!-- Using rest of the page -->
+    <div class="col-8">
+        <!-- ngx bootstrap tabs -->
+        <tabset class="member-tabset"> <!--Overwriting ng bootstrap tabs on global styles (styles.css)-->
+            <!-- About Tab -->
+            <tab heading="About {{member.knownAs}}">
+                <h4>Description</h4>
+                <p>{{member.introduction}}</p>
+                <h4>Looking for</h4>
+                <p>{{member.lookingFor}}</p>
+            </tab>
+            <!-- Interests Tab -->
+            <tab heading="Interests">
+                <h4>Interests</h4>
+                <p>{{member.interests}}</p>
+            </tab>
+            <!-- Photos Tab -->
+            <!-- STUDY NOTES : Template Reference Variable - # (#photoTab) 
+                0. Variables used inside the template itself, as it does not come from the TS 
+                1. In this case we are adding the variable because the photos were not loading correctly for the 1st image loaded 
+                2. We are initializing the template variable to use in a directive variable, to let the gallery know to 
+                    only load the gallery IF the photos tabs has been fully loaded
+                    1. YOu will need to initialize the template variable as a "tab" 
+                    2. To get access to the .active property to check if the photos tab is active to load the image
+            -->
+            <tab heading="Photos" #photoTab = "tab">
+                <!-- gallery comes from the GalleryModule, loading images from the component.ts images property -->
+                <!-- <gallery> tag is not closed automatically </gallery> -->
+                <gallery *ngIf="photoTab.active" [items]="images" class="gallery"></gallery> <!--styles.css-->
+            </tab>
+            <!-- Messages Tab -->
+            <tab heading="Messages">
+                <p>Messages will go here</p>
+            </tab>
+        </tabset>
+    </div>
+</div>
+
+<!-- STUDY NOTES - CSS - Bootstrap - NG TABS - NG Image Gallery - Assets - StandAlone Component
+    1. Angular Bootstrap Columns -
+        1. Column classes indicate the number of columns you'd like to use out of the possible 12 per row. 
+        2. So, if you want three equal-width columns across, you can use . col-4 . 
+        3. Column width s are set in percentages, so they're always fluid and sized relative to their parent element. 
+        4. In this case by selecting col-4, we got 8 remaining columns that we can choose from
+
+    2. Root Folder For Assets
+        1. We can set assets to load into our project 
+        2. The root is indicated by a ./
+        3. This will read from the entire project, we do not need to specify further 
+        4. Example: './assets/user.png'
+
+    3. ngx-bootstrap tabs 
+        1. https://valor-software.com/ngx-bootstrap/#/components/tabs?tab=api
+        2. Check if you already have ngx bootstrap installed (in the app.module.ts(from 'ngx-bootstrap/) folder see if bootstrap is already there)
+            1. If you do, just add the imports in the documentation 
+        3. After installing tabset to your modules, you get access to the <tabset> to set tabs in the page
+
+    4. ngx-gallery
+        0. More notes on component.ts
+        1. https://ngx-gallery.netlify.app/#/getting-started/gallery
+        2. based on the version, you might need to set a previous version, to do so, use the @{version}
+            1. $ npm i ng-gallery @angular/cdk@16
+        3. For the HTML, add the gallery tag
+            1. when the gallery module has been added to the component.ts, else you wont have access to it
+    
+    5. StandAlone Component
+        1. Notes on the member-detail.component.ts 
+
+    
+-->
