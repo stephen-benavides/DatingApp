@@ -20,6 +20,8 @@ import { NotFoundComponent } from './errors/not-found/not-found.component';
 import { ServerErrorComponent } from './errors/server-error/server-error.component';
 import { MemberCardComponent } from './members/member-card/member-card.component';
 import { JwtInterceptor } from './_interceptors/jwt.interceptor';
+import { MemberEditComponent } from './members/member-edit/member-edit.component';
+import { LoadingInterceptor } from './_interceptors/loading.interceptor';
 
 @NgModule({
   declarations: [
@@ -34,7 +36,8 @@ import { JwtInterceptor } from './_interceptors/jwt.interceptor';
     TestErrorComponent,
     NotFoundComponent,
     ServerErrorComponent,
-    MemberCardComponent
+    MemberCardComponent,
+    MemberEditComponent
   ],
   imports: [
     BrowserModule,
@@ -54,8 +57,10 @@ import { JwtInterceptor } from './_interceptors/jwt.interceptor';
     
   ],
   providers: [
+    // STUDY NOTES: loading ALL INTERCEPTORS in our application in the "entry point" - MORE ON NOTES BELOW 
     {provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true},
-    {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true}
+    {provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true},
+    {provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true}
   ],
   bootstrap: [AppComponent]
 })
@@ -83,18 +88,7 @@ export class AppModule { }
         1. To use ng(angular) form functionality 
         2. #loginForm="ngForm" => nav.component.html
         3. <Input name="">
-      5. BsDropDownModule
-        1. To use angular bootstrap drop down menus 
-        2. From: https://valor-software.com/ngx-bootstrap/#/components/dropdowns?tab=api
-      6. toastr
-        1. Library use to display information back to the user in the form of small unnintrusive messages 
-        2. From: https://github.com/scttcper/ngx-toastr
-        3. toastr Implementation on:
-          1. nav.component.ts => login => error
-          2. register.component.ts => register => error
-        4. Change the position of the message by overriding css class inside the initialization of toastr in this page: 
-          ToastrModule.forRoot({positionClass: "toast-bottom-right"}) => positionClass 
-        5. To use the service you must inject it in your components, like any other service
+      
 
 
   Installation of 3rd party libraries 
@@ -133,4 +127,23 @@ export class AppModule { }
             CREATE src/app/_modules/shared.module.ts (192 bytes)
     4. More notes on ./app/_modules/shared.module.ts => STUDY NOTES 
 
+  
+    STUDY NOTES - Providers (all interceptors)
+      1. Here we load all interceptors in our application 
+      2. Inside providers array
+          1. It comes by default
+          2. providers: []
+        3. Specify the interceptor inside the provider array as an object {}
+          {provide: HTTP_INCERCEPTORS, useClass: ErrorInterceptor, multi: true}
+            1. provide 
+              - constant indicating the type of object that has been created. 
+              - For Interceptor IS HTTP_INTERCEPTOS
+            2. useClass 
+              - the name of the class that contains the logic for the interceptor (this class) 
+              - ErrorInterceptor
+            3. multi 
+              - angular comes with its own interceptors, 
+              - by setting 'true' you are ADDING to the current interceptors instead of REPLACING them. 
+
+        4. MORE NOTES ON: error.interceptor.ts
 */

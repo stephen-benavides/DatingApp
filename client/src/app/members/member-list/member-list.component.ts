@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Observable } from 'rxjs';
 import { Member } from 'src/app/_models/member';
-import { MembersService } from 'src/app/_service/members.service';
+import { MembersService } from 'src/app/_services/members.service';
 
 @Component({
   selector: 'app-member-list',
@@ -9,16 +10,22 @@ import { MembersService } from 'src/app/_service/members.service';
 })
 export class MemberListComponent implements OnInit {
   //store all members 
-  members: Member[] = [];
+  //members: Member[] = []; //==> Converting it to observable variable
+  members$: Observable<Member[]> | undefined; 
   
   //Injecting the member service
   constructor(private memberService: MembersService){ }
 
   ngOnInit(): void {
     //as soon as the component initializes, run the methods inside 
-    this.loadMember();
+    //this.loadMember(); //==> Data Caching Notes below
+
+    //As soon as the application begins, call all the members, the observable subscribes by default. Thus, replacing the loadMember() method below
+    this.members$ = this.memberService.getMembers();
   }
 
+  //GOTO -> Notes Below (Data Caching)  
+  /*
   //Subscribe to get all members 
   loadMember(){
     this.memberService.getMembers().subscribe({
@@ -26,6 +33,7 @@ export class MemberListComponent implements OnInit {
     });
     
   }
+  */
 }
 
 
@@ -42,4 +50,12 @@ export class MemberListComponent implements OnInit {
       .subscribe({
       next: (response) => this.members = response
     });
+
+  UPDATED - STUDY NOTES - DATA CACHING(2)
+    1. In the members.service.ts we are loading all information into a property.
+    2. Therefore we can use it as an observable object, so we can use an observable variable (members$) so it will be easier to subscribe and unsubscribe automatically 
+    by using the async pipe 
+    3. More notes about this type of variables on "nav.component.ts" => currentUser$
+    4. Now we can open the member-list.component.html (this template) and change the member using the async pipe so it will subscribe and unsubscribe automatically. 
+
 */

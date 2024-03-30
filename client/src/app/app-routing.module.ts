@@ -9,6 +9,8 @@ import { authGuard } from './_guards/auth.guard';
 import { TestErrorComponent } from './errors/test-error/test-error.component';
 import { ServerErrorComponent } from './errors/server-error/server-error.component';
 import { NotFoundComponent } from './errors/not-found/not-found.component';
+import { MemberEditComponent } from './members/member-edit/member-edit.component';
+import { preventUnsavedChangesGuard } from './_guards/prevent-unsaved-changes.guard';
 
 const routes: Routes = [
   /*
@@ -27,6 +29,9 @@ const routes: Routes = [
         {path: 'members', component: MemberListComponent, canActivate: [authGuard]},
         //To display details of the members '/:' - is a route parameter => https://localhost:4200/members/2 OR /name
         {path: 'members/:username', component: MemberDetailComponent},
+        //Changing from members to member, because the path would be the same to the members/:username, which will create errors
+        //Adding the deactivate guard to check if there are unsaved changes. GOTO _guards/prevent-unsaved-changes.guard.ts NOTES
+        {path: 'member/edit', component: MemberEditComponent, canDeactivate: [preventUnsavedChangesGuard]}, 
         //To display messages => https://localhost:4200/messages
         {path: 'messages', component: MessagesComponent},
         //To display lists => => https://localhost:4200/lists

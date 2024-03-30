@@ -1,0 +1,145 @@
+<div class="row" *ngIf="member">
+    <!-- bootstrap, page with col of 4, maximum columns avaiable (12), remaning (8)-->
+    <div class="col-4">
+        <div class="card">
+            <!-- If the user has no photo, then, from the assets folder in this projejct, load the user.png -->
+            <img class="card-img-top img-thumbnail" src="{{member.photoUrl || './assets/user.png'}}"
+                alt="{{member.knownAs}}">
+            <div class="card-body">
+                <div>
+                    <strong>Location: </strong>
+                    <p>{{member.city}}, {{member.country}}</p>
+                </div>
+                <div>
+                    <strong>Age: </strong>
+                    <p>{{member.age}}</p>
+                </div>
+                <div>
+                    <strong>Last active: </strong>
+                    <p>{{member.lastActive}}</p>
+                </div>
+                <div>
+                    <strong>Member since: </strong>
+                    <p>{{member.created}}</p>
+                </div>
+            </div>
+            <div class="card-footer">
+                <!-- make sure the buttons are in a row, and not in a column -->
+                <div class="btn-group d-flex">
+                    <!-- Setting the button outside of the form to the form "editForm" -->
+                    <!-- Disable the button if the form is not 'dirty' --Notes Below -->
+                    <button type="submit" form="editForm" class="btn btn-success" [disabled]="!editForm.dirty">Save Changes</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- Using rest of the page -->
+    <div class="col-8">
+        <!-- Alert Window -->
+        <div class="alert alert-info" *ngIf="editForm.dirty">
+            <strong>Information: </strong>You have made changes. Any unsaved changes will be lost
+        </div>
+        <!-- ngx bootstrap tabs -->
+        <tabset class="member-tabset"> <!--Overwriting ng bootstrap tabs on global styles (styles.css)-->
+            <!-- About Tab -->
+            <tab heading="About {{member.knownAs}}">
+                <!-- Converting form to angular form  -->
+                <form #editForm = "ngForm" id="editForm" (ngSubmit)="updateMember()"> 
+                    <!-- Description Box-->
+                    <h4 class="mt-2">Description</h4>
+                    <textarea class="form-control" 
+                        [(ngModel)]="member.introduction"
+                        name="introduction" 
+                        rows="6"
+                    ></textarea>
+                    <!-- Looking For Box -->
+                    <h4 class="mt-2">Looking for</h4>
+                    <textarea class="form-control"
+                        [(ngModel)]="member.lookingFor" 
+                        name="lookingFor"  
+                        rows="6"
+                    ></textarea>
+                    <!-- Interests Box -->
+                    <h4 class="mt-2">Interests</h4>
+                    <textarea class="form-control" 
+                        [(ngModel)]="member.interests"
+                        name="interests" 
+                        rows="6"
+                    ></textarea>
+                    <!-- Location Details DIV -->
+                    <h4 class="mt-2">Location Details</h4>
+                    <!-- Creating the div to set everything in a single line and overwriting the conventions of the labels to be above the box -->
+                    <div class="d-flex flex-row align-items-center"> 
+                        <!-- City Box -->
+                        <label for="city">City: </label>
+                        <input class="form-control mx-2"
+                            type="text"
+                            [(ngModel)]="member.city"
+                            name="city"
+                        >
+                        <!-- Country Box -->
+                        <label for="country">Country: </label>
+                        <input class="form-control mx-2"
+                            type="text"
+                            [(ngModel)]="member.country"
+                            name="country"
+                        >
+                    </div>
+                </form>
+
+            </tab>
+            <!-- Edit Photo Tab -->
+            <tab heading="Edit Photos">
+                <p>Edit Photos will go here</p>
+            </tab>
+
+        </tabset>
+    </div>
+</div>
+
+<!-- STUDY NOTES - Updating Member Details 
+    1. Based on the member details 
+    2. Cant use the Form outside of a tab => <tabset>
+    3. When using ngModel, you must always add a name to the input text associated with it
+        EXAMPLE: 
+            <label for="country">Country: </label>
+                <input class="form-control mx-2"
+                    type="text"
+                    [(ngModel)]="member.country"    => From Country
+                    name="country"                  => Identifiable ID, Country 
+                >
+            1. If this ids for the name and the ngModel do not match, then ANGULAR wont have a way to bind the values, 
+            2. so make sure they match
+    4. You must always make sure that the form has an id of type ngForm, otherwise it wont be an angular form 
+    5. the form must contain the (ngSubmit) = "method", othersie it won't know where to send the form data
+
+
+    STUDY NOTES: SETTING BUTTONS OUTSIDE THE FORM 
+        1. In the form, besides the #id="ngForm", set an id attribute id = "id"
+        2. Create the button outside the form 
+        2. In the button, set a form variable equal to the form id that you want to use 
+            1. <form #editForm = "ngForm" id="editForm" (ngSubmit)="updateMember()"> 
+            2. <button type="submit" form="editForm" class="btn btn-success">Save Changes</button>
+            3. number 1, has the id = editForm. Which is used on number 2. form= "editForm"
+        
+
+    STUDY NOTES: DIRTY FORM 
+        1. Dirty form means that a form has been changed in the client. There has been changes in the UI
+        2. When there are changes in the form, we can see them because of the [(ngModel)], as its 2 way binding we now at all times any changes that are made to properties with this decorator
+        3. Keyword .dirty    
+        4. Example - *ngIf="editForm.dirty"
+        5. Problems with .dirty
+            1. When we submit the form, it will considered itself dirty trhoughout, and will remain to the same 
+            2. To avoid the issue, we need to reset the state of the form with the new changes, so they will re main 
+            3. To do so, use the @ViwChild('formId/editForm') in the .ts 
+            4. GOTO member-edit.component.ts to see how it was implemented 
+
+
+    STUDY NOTES: Prevent User from loosing information if they have unsaved changes
+        1. In case the user has made changes, they move to another tab or page by mistake. 
+            1. This will make it so all the changes in the form are reverted
+            2. We can avoid it by preventing the user to move to another tab if they have unsaved changes 
+                3. GOTO: _guards > prevent-unsaved-changes.guard.ts 
+                4. GOTO: member-edit.component.ts > @HostListener() Notes 
+-->

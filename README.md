@@ -33,6 +33,11 @@ This application is developed with a range of technologies making it robust and 
 - **Angular Component Dev Kit (CDK)** 
 - **ngx-gallery** 3rd party photo gallery tool, to display gallery images to the client, uses StandAlone Components for its functioning
 - **ActivatedRoute** to get values from the query string / route parameters 
+- **NgxSpinner** for loading screens when awaiting resources to get back from the DB - injecting services into interceptors   
+- **@ViewChild Decorator** to access data inside of components  
+- **Deactivation Guards** to prevent users from exiting unsaved forms by mistake - form/component level
+- **@HostListener Decorator** to prevent users from exiting unsaved forms by mistake - application level 
+- **Data Caching** to prevent multiple calls to the DB. Thus, saving network resources. 
 
 ### Development Tools
 - **Environment:** Linux Ubuntu

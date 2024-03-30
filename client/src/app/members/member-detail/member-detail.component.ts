@@ -4,7 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { GalleryModule, ImageItem } from 'ng-gallery';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { Member } from 'src/app/_models/member';
-import { MembersService } from 'src/app/_service/members.service';
+import { MembersService } from 'src/app/_services/members.service';
 
 @Component({
   selector: 'app-member-detail',
@@ -36,10 +36,11 @@ export class MemberDetailComponent implements OnInit {
   }
 
   loadMember() {
-    /*STUDY NOTES - Get the username parameters from the active route
-      This comes from: path: 'members/:username', component: MemberDetailComponent
-      ON: app-routing.module.ts 
-      - The .get('username') MUST HAVE the same as the parameter in the app-routing, else it wont work: "/:username"
+    /*STUDY NOTES - ACTIVATED ROUTE
+      1. Get the username parameters from the active route
+      2. This comes from: path: 'members/:username', component: MemberDetailComponent
+      3. ON: app-routing.module.ts 
+      - The .get('username') MUST HAVE the same as the parameter in the app-routing.ts, else it wont work: "/:username"
     */
     const username = this.route.snapshot.paramMap.get('username');
 
@@ -74,12 +75,13 @@ export class MemberDetailComponent implements OnInit {
 }
 
 /* STUDY NOTES - Stand Alone Component TS
-
   - Detailed notes on OneNote > Angular > Components > STANDALONE COMPONENTS
   - Allows us to create component that are not attached to an ng module, thus can operate on their own
 
   STUDY NOTES - GalleryModule
     1. https://ngx-gallery.netlify.app/#/getting-started/gallery
     2. To use it we need to create a standalone component (this)
-    3. we need to load our images at run time 
+    3. Here we are setting this component similar to a shared.module.ts, to import the packages that we are going to be using
+    4. Then you can follow the notes on this component .html 
+    5. we need to load our images at run time 
 */

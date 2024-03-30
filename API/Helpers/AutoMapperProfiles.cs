@@ -1,5 +1,6 @@
 using API.DTO;
 using API.Entities;
+using API.Entities.DTO;
 using API.Extensions;
 using AutoMapper;
 
@@ -16,7 +17,11 @@ public class AutoMapperProfiles : Profile
         .ForMember( //Mapping the age using the GetAge()=> CalculateAge() Extension method for the DOB. originally from the AppUser.cs Model/Entity 
             destination => destination.Age,
             option => option.MapFrom(src => src.DateOfBirth.CalculateAge()));
+
         CreateMap<Photo, PhotoDto>();
+
+        //Map Between MemberUpdateDto and the user in the DB  
+        CreateMap<MemberUpdateDto, AppUser>();
     }
 }
 
@@ -51,6 +56,7 @@ public class AutoMapperProfiles : Profile
         - Implementing new mapping conditions 
             1. For any new mapping conditions, you need to add extra .ForMember() for each new property 
             2. You can have as many as you need. 
-
+        - IF there are any new objects you want to map, you must do so here FIRST, as it is a requierement for the automapper to work, else it wont know the objects that it needs to map.
+            Regardless if you want to set additional conditions or not. 
 
 */

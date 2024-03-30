@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using API.Controllers;
 using API.Data;
 using API.DTO;
@@ -8,6 +9,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace API.Controllers;
 [Authorize]
@@ -61,6 +63,36 @@ public class UsersController : BaseApiController
         */
         return Ok(await _userRepository.GetMemberByUsernameAsync(name));
     }
+
+    [HttpPut] // /api/users
+    //GOTO UpdateUser() Notes Below
+    public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto){
+        
+        //If the user can update, then the user is successfully authenthicated by the JWT token 
+
+        //Get the username from the JWT claim, which is the first claim registered 
+            //(Token Service => new Claim(JwtRegisteredClaimNames.NameId, user.UserName)). The are both "the same" name ID
+        var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        
+        //With the username we can now get the user from the DB to update it
+        var userFromDB = await _userRepository.GetUserByUsernameAsync(username);
+        //If the user does not exist
+        if(userFromDB == null)
+            return NotFound();
+        
+
+        //If the user exist, map our memberdto to the userFromDB 
+        //This will automatically overwrite all the changes into the user from the DB
+        _mapper.Map(memberUpdateDto, userFromDB);
+        
+        //SaveAllAsync() will return true if the update to the DB was successfull
+        if(await _userRepository.SaveAllAsync())  
+            return NoContent(); //Standard for successful "update" HTTP code (204)
+
+        //else the entire thing failed
+        return BadRequest("Failed to update user");
+
+    }
     
 
     /* STUDY NOTES - Using [Authorize] and [AllowAnonymous] for authenthication and authorization
@@ -90,5 +122,22 @@ public class UsersController : BaseApiController
             2. Invoke your controller that is implementing the query
             3. Check the TERMINAL where your API is running 
             4. There you will see how EF is interpreting your query, the same way is done by the SQL Server Profiler (OneNote > EF > Querying using LINQ)
+
+        STUDY NOTES - UpdateUser() 
+            1. This method is of type put, as we are updating a user 
+            2. We do not need to return anything else to the user, thus only an Action Result will sufice 
+            3. The user that can update a member must be logged in. Thus, they have a valid bearer token. 
+                The token contains information about the user such as the username, so we can use it to authenthicate the request and update the necessary information 
+                1. User comes from the Claims class, which we get access to when we load the KWT components
+                2. GOTO Services > TokenService.cs
+
+            TESTING THIS METHOD
+                1. In postman, make sure you are getting a valid bearer token with the username you want to update 
+                    1, Go to Section 8 > Login as Lisa and save token to environment 
+                    2. Then you can go to 10, and update the member with the saved bearer token 
+                2. Entity Framework, checks all the changes made through their own data caching, therefore if no "new" changes are made, then it won't go through the DB
+                    So in this code, even if you are authenthicated succesfully and hit the "save" button, it will still fail and return BadRequest("Failed to update user"); 
+                    as no "new changes" will be made
+
     */
 }

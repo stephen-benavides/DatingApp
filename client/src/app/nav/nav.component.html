@@ -33,7 +33,8 @@
       <div  class="dropdown" *ngIf="(currentUser$ | async) as user" dropdown>
         <a id="welcomeButton" class="dropdown-toggle text-light text-decoration" dropdownToggle>Welcome {{user.username | titlecase}}</a>
         <div class="dropdown-menu" *dropdownMenu>
-          <a  class="dropdown-item">Edit Profile</a>
+          <!-- routerLink can be anything, as long as this 'path' is the same one as the one in app-routing.module.ts -->
+          <a  class="dropdown-item" routerLink="/member/edit">Edit Profile</a>
           <a href="#" class="dropdown-item" (click)="logout()">Logout</a>
         </div>
       </div>
@@ -76,7 +77,7 @@
         4. In Imports => import { AppRoutingModule } from './app-routing.module';
 
 
-  Angular Structural Directives (*)
+  STUDY NOTES - Angular Structural Directives (*)
     1. Allows us to run angular commands 
     2. Think of it as razor syntax (@Html. || @Scripts) to manipulate the DOM using c# 
     3. The directive for angular is '*'
@@ -100,7 +101,7 @@
 
 
 
-  Angular Elements Type 
+  STUDY NOTES - Angular Elements Type 
     Interpolation {{}}:
       1. Allows us to interact with objects from the components (.components.ts)
       2. {{title}} OR {{user.Username}} -> 
@@ -150,12 +151,15 @@ STUDY NOTES - ROUTING
     1. Similar to ActionLink from ASP.NET MVC 
       1. Which allows to re troute when the user hits on a link to another page within the same MVC page 
     2. It belongs to angular routing 
-    3. Requieres routing to be active 
+    3. Requieres routing to be active (During project creation OR through CLI, as long as app-routing.module.ts is created) 
     4. You must have the '/' in the name 
       1. <a class="nav-link" routerLink="/lists" >Lists</a>
+      2. routerLink can be anything, as long as this 'path' is the same one as the one in app-routing.module.ts
     5. The path comes from the one set up in app-routing.module.ts 
       1. //To display lists => => https://localhost:4200/lists
         {path: 'lists', component: ListsComponent},
+      2. routerLink='/lists' => path: 'lists'
+      
 
   2. routerLinkActive = "active"
     1. routerLinkActive is an angular property 
