@@ -1,0 +1,144 @@
+<!-- only if there is an active member, display this div -->
+<!-- Display images stored in the member as thumbnails in a row -->
+<div class="row mb-4" *ngIf="member">
+    <div class="col-2 mb-3" *ngFor="let photo of member.photos">
+        <!-- mb-1: margin botton 1 (bootstrap) -->
+        <img src="{{photo.url}}" alt="photo of user" class="img-thumbnail mb-1">
+        <!-- add buttons to the image -->
+        <div class="text-center">
+            <!-- Main button
+                1. If it is the main photo, disable it [disabled] 
+                2. OnClick, invoke the method to set the main photo
+                3. Set a conditional class, based on wheter it is the main photo or not, we are going to be displaying a success color for the button or an edge using bootstrap
+                4. By clicking main, the member and the user will be changed with the new photo, this means that the main big photo profile will be changed as well as the member's icon
+            -->
+            <button 
+                [disabled]="photo.isMain"  
+                (click)="setMainPhoto(photo)"
+                [ngClass]="(photo.isMain) ? 'btn-success active' : 'btn-outline-success'"
+                class="btn btn-sm">Main</button>
+            <!-- Delete button
+                1. If the element is main, disable the button -->
+            <button 
+                [disabled]="photo.isMain"
+                (click)="deletePhoto(photo.id)"
+                class="btn btn-sm btn-danger">
+                <!-- giving the button an icon (font-awesome) -->
+                <i class="fa fa-trash"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- ng2-file-uploader - code snipet from site + own changes -->
+<div class="row">
+    <!-- col-md-3 - md is for responsive design-->
+    <div class="col-3"> 
+
+        <h3>Add Photos</h3>
+
+        <!-- mb-3 = Margin Botton 3 - it creates extra space at the botton
+        my-drop-zone = Allows for further customization
+        card = Makes this into a card 
+        i = font awesome icons-->
+        <div ng2FileDrop
+             [ngClass]="{'nv-file-over': hasBaseDropZoneOver}"
+             (fileOver)="fileOverBase($event)"
+             [uploader]="uploader"
+             class="card bg-faded p-4 text-center mb-3 my-drop-zone">
+             <i class="fa fa-upload fa-3x"></i>
+            Drop photos here
+        </div>
+
+        Multiple
+        <input type="file" ng2FileSelect [uploader]="uploader" multiple  /><br/>
+
+        Single
+        <input type="file" ng2FileSelect [uploader]="uploader" />
+    </div>
+
+    <!-- Only display the 'Upload Queue' if we have a file in the uploader -->
+    <div class="col-9" style="margin-bottom: 40px" *ngIf="uploader?.queue?.length">
+
+        <h3>Upload queue</h3>
+        <p>Queue length: {{ uploader?.queue?.length }}</p>
+
+        <table class="table">
+            <thead>
+            <tr>
+                <th width="50%">Name</th>
+                <th>Size</th>
+                <!-- taking out to have a better layout - we already have a better progress bar below
+                <th>Progress</th>
+                <th>Status</th>
+                <th>Actions</th> -->
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of uploader?.queue">
+                <td><strong>{{ item?.file?.name }}</strong></td>
+                <td *ngIf="uploader?.options?.isHTML5" nowrap>{{ item?.file?.size/1024/1024 | number:'.2' }} MB</td>
+                <!-- <td *ngIf="uploader?.options?.isHTML5">
+                    <div class="progress" style="margin-bottom: 0;">
+                        <div class="progress-bar" role="progressbar" [ngStyle]="{ 'width': item.progress + '%' }"></div>
+                    </div>
+                </td> -->
+                <!-- <td class="text-center">
+                    <span *ngIf="item.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>
+                    <span *ngIf="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>
+                    <span *ngIf="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
+                </td> -->
+                <!-- <td nowrap>
+                    <button type="button" class="btn btn-success btn-xs"
+                            (click)="item.upload()" [disabled]="item.isReady || item.isUploading || item.isSuccess">
+                        <span class="glyphicon glyphicon-upload"></span> Upload
+                    </button>
+                    <button type="button" class="btn btn-warning btn-xs"
+                            (click)="item.cancel()" [disabled]="!item.isUploading">
+                        <span class="glyphicon glyphicon-ban-circle"></span> Cancel
+                    </button>
+                    <button type="button" class="btn btn-danger btn-xs"
+                            (click)="item.remove()">
+                        <span class="glyphicon glyphicon-trash"></span> Remove
+                    </button>
+                </td> -->
+            </tr>
+            </tbody>
+        </table>
+
+        <div>
+            <div>
+                Queue progress:
+                <div class="progress" >
+                    <div class="progress-bar" role="progressbar" [ngStyle]="{ 'width': uploader?.progress + '%' }"></div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-success btn-s"
+                    (click)="uploader?.uploadAll()" [disabled]="!uploader?.getNotUploadedItems()?.length">
+                <span class="fa fa-upload"></span> Upload all
+            </button>
+            <button type="button" class="btn btn-warning btn-s"
+                    (click)="uploader?.cancelAll()" [disabled]="!uploader?.isUploading">
+                <span class="fa fa-bar"></span> Cancel all
+            </button>
+            <button type="button" class="btn btn-danger btn-s"
+                    (click)="uploader?.clearQueue()" [disabled]="!uploader?.queue?.length">
+                <span class="fa fa-trash"></span> Remove all
+            </button>
+        </div>
+
+    </div>
+
+</div>
+<!-- 
+    STUDY NOTES
+    1. Photo Uploader (ng2-file-uploader)
+        1. Snipet taken from the valor page
+            1.From LINE: 17 => 116
+        2. More notes on the share.module.ts
+
+
+-->

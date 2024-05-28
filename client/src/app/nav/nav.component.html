@@ -31,6 +31,8 @@
       <!-- Surrounding observable object with an alias, which can be used for all the children of the container, it can be used by using interpolation {{}} -->
       <!-- Setting a pipe '|' to provide more functionality, in this case, titlecase: which set the initial letter to uppercase -->
       <div  class="dropdown" *ngIf="(currentUser$ | async) as user" dropdown>
+        <!-- Adding the current user's image -->
+        <img src= "{{user.photoUrl || './assets/user.png'}}" alt="user photo" class="me-2">
         <a id="welcomeButton" class="dropdown-toggle text-light text-decoration" dropdownToggle>Welcome {{user.username | titlecase}}</a>
         <div class="dropdown-menu" *dropdownMenu>
           <!-- routerLink can be anything, as long as this 'path' is the same one as the one in app-routing.module.ts -->

@@ -64,7 +64,7 @@ public class AccountController : BaseApiController
 
     [HttpPost("login")] //api/account/login
     public ActionResult<UserDto> Login(LoginDto userLogin){
-        var userInDb = _dataContext.Users.SingleOrDefault(u => u.UserName.Equals(userLogin.Username.ToLower()));
+        var userInDb = _dataContext.Users.Include(photo => photo.Photos).SingleOrDefault(u => u.UserName.Equals(userLogin.Username.ToLower()));
         
         //check if the user exists in the DB 
         if(userInDb == null)
@@ -83,7 +83,14 @@ public class AccountController : BaseApiController
         }
         return new UserDto{
             Username = userInDb.UserName,
-            Token = _tokenService.CreateToken(userInDb)
+            Token = _tokenService.CreateToken(userInDb),
+            PhotoUrl = userInDb.Photos.SingleOrDefault(photo => photo.IsMain)?.Url //=> There may or may not be a photo when the user first logins into the application
+            /*PhotoUrl is a related entity, it means that it has a reference in user only.
+            Thus, we must eagerly loaded, as it is required bby entity framework  
+                1. To make it so it is eagerly loaded, use the .include() in the request - line67. To load the related object of Photos
+                2. More notes on eagerly loaded objects using entity framework on OneNote > EntitiyFramework > Section 7 
+                3. Remember, EF does not load related entities by default
+            */
         };
     }
 }

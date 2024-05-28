@@ -38,6 +38,8 @@ This application is developed with a range of technologies making it robust and 
 - **Deactivation Guards** to prevent users from exiting unsaved forms by mistake - form/component level
 - **@HostListener Decorator** to prevent users from exiting unsaved forms by mistake - application level 
 - **Data Caching** to prevent multiple calls to the DB. Thus, saving network resources. 
+- **Cloudinary** 3rd party image and video service. To store the images in the cloduinary services. We can avoid either storing into the DB as large byte data or in file systems, which could easily deplete our resources.  
+- **ng2-file-upload** angular 3rd party service to upload files
 
 ### Development Tools
 - **Environment:** Linux Ubuntu

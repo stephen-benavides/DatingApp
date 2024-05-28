@@ -54,7 +54,7 @@ export class AppComponent implements OnInit{
     */
     // const user:User = JSON.parse(localStorage.getItem('user'));
 
-    //Explicit approach to get the user 
+    //Explicit approach to get the user from the client's local storage
     const userString = localStorage.getItem('user');
     //If user is null return
     if(!userString){

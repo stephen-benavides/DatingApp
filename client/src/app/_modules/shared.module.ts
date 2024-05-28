@@ -4,6 +4,7 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ToastrModule } from 'ngx-toastr';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { FileUploadModule } from 'ng2-file-upload';
 
 
 
@@ -14,13 +15,15 @@ import { NgxSpinnerModule } from 'ngx-spinner';
     BsDropdownModule.forRoot(),
     ToastrModule.forRoot({positionClass: "toast-bottom-right"}), //Set the position of the toastr in the screen, for all toastr objects
     TabsModule.forRoot(), //To use the tabs module from ngx bootsrap - member-edit.component.html
-    NgxSpinnerModule.forRoot({type: "line-spin-clockwise-fade"}) //To use the angular spinner to show loading screen 
+    NgxSpinnerModule.forRoot({type: "line-spin-clockwise-fade"}), //To use the angular spinner to show loading screen 
+    FileUploadModule
   ],
   exports: [
     BsDropdownModule,
     ToastrModule,
     TabsModule,
-    NgxSpinnerModule
+    NgxSpinnerModule,
+    FileUploadModule
   ]
 })
 export class SharedModule { }
@@ -75,4 +78,14 @@ export class SharedModule { }
       1. Needed to display laoding screens 
       2. forRoot() is use to pass a global configuration that will override any other configuration. It is used to make sure the .css file is going to be use 
         throghout 
+
+    5. FileUploadModule
+      1. From ng2-file-upload 
+        - https://github.com/valor-software/
+        - https://valor-software.com/ng2-file-upload/
+      2. It is use to upload files into the system
+      3. No need to specify the @ when installing it through npm 
+      4. Taking the code from the valor page, we can copy paste the code, make sure to do the necessary changes, other than that the variables must be the same. 
+      5. Initialization and more notes on photo-editor.component (html and ts)
+
 */

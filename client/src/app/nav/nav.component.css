@@ -6,3 +6,11 @@
 .text-decoration{
     text-decoration: none;
 }
+
+/* modifies the small photo for the user */
+img{
+    max-height: 50px;
+    border: 2px solid white;
+    /* to make it inline other contents in the nav bar */
+    display: inline; 
+}

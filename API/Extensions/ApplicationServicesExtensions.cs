@@ -1,7 +1,10 @@
 using System.Text;
 using API.Controllers.Services;
 using API.Data;
+using API.Helpers;
+using API.Helpers.IPhotoService;
 using API.Interfaces;
+using API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -37,8 +40,12 @@ public static class ApplicationServicesExtensions
         services.AddScoped<ITokenService, TokenService>();
         //Initialzing our user Repository 
         services.AddScoped<IUserRepository, UserRepository>();
-        //Initializing our automapper, need to tell where our mappers are 
+        //Initializing our automapper, need to tell where our mappers are //GOTO - Notes Below
         services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+        //Binds the CloudinarySettings from appsettings.json TO the CloduinarySettings.cs. More notes on CloduinarySettings.cs
+        services.Configure<CloduinarySettings>(configuration.GetSection("CloudinarySettings")); 
+        //Initializing our IPhotoService interface with PhotoService implementation 
+        services.AddScoped<IPhotoService, PhotoService>();
 
         #endregion
         
@@ -73,8 +80,22 @@ public static class ApplicationServicesExtensions
 }
 
 
-/*STUDY NOTES - Custom Extension Method to apply custom services into Program.cs
+/*
+STUDY NOTES - Configuration 
+    1. Anything that comes from configuration means either appsettings.json OR appsettings.Development.json 
+    2. You can store more sensitive information on appsettings.json and making sure it is not on your source control (add to gitignore)
+    3. You can retrieve information for either of the same way, you dont need to specify if it is from the .development or the appsettings.json itself 
+    4. Example: 
+        1. configuration.GetSection("CloudinarySettings"))
+            1. Get the entire section that is stored in the config file (json) 
+            2. Best when using services.configure to bind the objects from the config file to the c# object 
+            3. This one is currently on appsettings.json 
+        2. configuration["TokenKey"]
+            1. To get the value stored in the token key
+            2. This one is currently on appsettings.Development.json 
 
+
+STUDY NOTES - Custom Extension Method to apply custom services into Program.cs
     - To create a Jason Web Token (JWT) for authenthication and authorization 
     - Add authenthication and authorization variables 
     - Adding custom depenency Injection 

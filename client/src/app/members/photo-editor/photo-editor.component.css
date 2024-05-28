@@ -1,0 +1,16 @@
+.nv-file-over { 
+    border: dotted 3px red; 
+} 
+/* .my-drop-zone { 
+    border: dotted 3px lightgray; 
+}
+.another-file-over-class { 
+    border: dotted 3px green; 
+} */
+/* Removes the text "No file chosen"  from the Multiple and Single choose files options, as they use the type=input*/
+input[type=file]{
+    color:transparent;
+}
+
+/* FROM  https://valor-software.com/ng2-file-upload/ => Markup*/
+/* Default class applied to drop zones on over */

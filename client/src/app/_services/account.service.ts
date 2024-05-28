@@ -78,12 +78,8 @@ export class AccountService {
         map((response: User)=>{ //1) change the response to retrieve a User(model) instead of any 
           const user = response;
           if(user){
-            localStorage.setItem('user', JSON.stringify(user))
-            // window.alert("username: " + user.username + " token: " + user.token);
-            /* Storing the value of the user in the BehaviorSubject object 
-                As any observable, you need to define what to do next, on error and on complete 
-            */
-            this.currentUserSource.next(user);
+            //store the user information, as well as the user token in the client's local storage 
+            this.setCurrentUser(user);
           }
           return user;
         })
@@ -97,6 +93,14 @@ export class AccountService {
     - public void setCurrent()
   */
  setCurrentUser(user: User){
+  //If there is a response then add the user to the storage (assume logged in)
+  // window.alert("username: " + user.username + " token: " + user.token); //=> DEBUG that it has a valid user token stored 
+  localStorage.setItem('user', JSON.stringify(user))
+
+  /* Storing the value of the user in the BehaviorSubject object 
+   1. Add it to the behaviorsubject variable so we can use outside the service, it is an observable so we need to add as next, complete, etc
+   2. As any observable, you need to define what to do next, on error and on complete 
+  */
   this.currentUserSource.next(user);
  }
 
@@ -118,10 +122,8 @@ export class AccountService {
        */
       map((user) => {
           if(user){
-            //If there is a response then add the user to the storage (assume logged in)
-            localStorage.setItem('user', JSON.stringify(user));
-            // Add it to the behaviorsubject variable so we can use outside the service, it is an observable so we need to add as next, complete, etc
-            this.currentUserSource.next(user);
+            //store the user information, as well as the user token in the client's local storage 
+            this.setCurrentUser(user);
           }
           //#region  Using Return User inside the map (RxJS) 
           //Needs to be returned if something is projected by the map (RxJS) 

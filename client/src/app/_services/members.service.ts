@@ -107,6 +107,17 @@ export class MembersService {
       })
     );
   }
+
+  //Set the main photo based on the photo id
+  setMainPhoto(photoId : number){
+    //Because it is a put request, we are setting an empty object '{}' inside the request 
+    return this.http.put<Member>(this.baseUrl + 'users/set-main-photo/' + photoId, {});
+  }
+  //Delete the current photo
+  deletePhoto(photoId: number){
+    //We do not really need to set a member, as we are not returning an object of type member, we are just updating an object in the DB, this is also the case for the above, update member and setMainPhoto, as we do not requiere to return an object to display back to the client
+    return this.http.delete(this.baseUrl + 'users/delete-photo/' + photoId);
+  }
 }
 
 

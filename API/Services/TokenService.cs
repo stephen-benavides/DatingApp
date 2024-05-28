@@ -55,3 +55,15 @@ public class TokenService : ITokenService
         return tokenHandler.WriteToken(token);
     }
 }
+
+
+/*
+    STUDY NOTES - Server Side JWT Configuration 
+    1. Use to create a token that is going to be use for the authenthication and authorization of users 
+    2. Installation: 
+        1. Nuget > system.identity > System.Identity.Model.Tokens.Jwt by Microsoft 
+        2. This will allow us to use: System.Security.Claims;
+            1. Access to the Claims, Claims Principal
+            2. This will allo us to create Claims (this page) and to open up claims (UsesContoller.cs => User.GetUser()
+                => ClaimsPrincipalExtension.cs => return user.FindFirst(ClaimTypes.NameIdentifier)?.Value;)
+*/

@@ -47,7 +47,7 @@ public class UserRepository : IUserRepository
     {
         //There should only be 1 user that exists, you can also use FirstOrDefault()
         return await _context.Users
-        .Include(appUser => appUser.Photos)
+        .Include(appUser => appUser.Photos) //eagerly loading = loads all the elements insitead of waiting
         .SingleOrDefaultAsync(appUser => appUser.UserName == username);
     }
 
