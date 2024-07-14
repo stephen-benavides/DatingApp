@@ -1,0 +1,21 @@
+<!-- same as text-input.component.html 
+    For the bsDatepicker, bsConfig, maxDate. These elements all come from the templates in bootstrap
+    for the datePicker. We are defining that this elements will come fromt he .ts of this component. 
+-->
+<div class="mb-3">
+    <input
+        [formControl]="control"
+        type="text" 
+        [class.is-invalid]="control.invalid && control.touched" 
+        class="form-control" 
+        placeholder="{{label}}"
+
+        bsDatepicker
+        [bsConfig]="bsConfig"
+        [maxDate]="maxDate"
+    >
+    <!-- bootsrap error messages in case the above is invalid (touched bot nothing selected) -->
+    <div *ngIf="control.errors?.['required']" class="invalid-feedback">
+        {{label}} is required
+    </div>
+</div>

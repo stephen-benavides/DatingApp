@@ -22,6 +22,9 @@ public class AutoMapperProfiles : Profile
 
         //Map Between MemberUpdateDto and the user in the DB  
         CreateMap<MemberUpdateDto, AppUser>();
+
+        //Mep between ReigsterDto and the user in the DB
+        CreateMap<RegisterDto, AppUser>();
     }
 }
 

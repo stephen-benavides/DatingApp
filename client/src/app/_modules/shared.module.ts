@@ -5,6 +5,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { FileUploadModule } from 'ng2-file-upload';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
 
 
@@ -16,14 +17,18 @@ import { FileUploadModule } from 'ng2-file-upload';
     ToastrModule.forRoot({positionClass: "toast-bottom-right"}), //Set the position of the toastr in the screen, for all toastr objects
     TabsModule.forRoot(), //To use the tabs module from ngx bootsrap - member-edit.component.html
     NgxSpinnerModule.forRoot({type: "line-spin-clockwise-fade"}), //To use the angular spinner to show loading screen 
-    FileUploadModule
+    FileUploadModule,
+    BsDatepickerModule.forRoot(), //For the date picker - GOTO: STUDY NOTES: TYPE - DATE (1)
   ],
+  //As this is the 'sharedModule component' which we need to load in the app.component.ts, then the modules above, must also be included 
+  //here to be used outside this module. 
   exports: [
     BsDropdownModule,
     ToastrModule,
     TabsModule,
     NgxSpinnerModule,
-    FileUploadModule
+    FileUploadModule,
+    BsDatepickerModule
   ]
 })
 export class SharedModule { }

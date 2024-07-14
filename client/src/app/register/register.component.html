@@ -1,43 +1,165 @@
-<form #registerForm="ngForm" (ngSubmit)="register()" autocomplete="off">
+<!-- Removing @registerForm, as it belongs to template form, we are going to use reactive form [formGroup], we can keep the NgSubmit -->
+<!-- <form #registerForm="ngForm" (ngSubmit)="register()" autocomplete="off"> -->
+    <!-- (ngSubmit)="this.registerForm.valid && register()" => Only submit if this form is valid 
+        Will make it so we are unable to register if the form is invalid, second level of protection, first is disabling the register button if invalid -->
+<form [formGroup]="registerForm" (ngSubmit)="this.registerForm.valid && register()" autocomplete="off">
     <h2 class="text-center text-primary">Sign Up</h2>
     <!-- Blank Space -->
     <hr>
     <!-- User Input Form -->
-    <div class="mb-3">
-        <!-- Username Input -->
-        <input
-            [(ngModel)]="model.username" 
-            name="username"
-            type="text" 
-            class="form-control"
-            placeholder="Username"
-        >
+    <!-- formControl is the constructor in the app - @Self() public ngControl: NgControl 
+             [label]="'Username'" [type]="'text'" are also input (@Input()) in text-input.component.ts
+     -->
 
-        <!-- Pass the list of users from the home component (parent to child) -->
-        <!-- drop down menu -->
-        <!-- not needed (more info on register.component.ts). No as we do not need to pass users into our form 
-            <div class="mb-3">
-            <label>Who is your favorite user?</label>
-            <select class="form-select">
-                <option *ngFor="let user of usersFomHomeController" [value]="user.userName">
-                {{user.userName}}
-                </option>
-            </select>
-        </div> -->
-        
+    <!-- REACT FORM - gender 
+        As the gender uses a radio button, which is not currently defined in 'text-input.component' Then, we 
+        need to do so manually. The difference is mainly the 'formControlName', which is map to the objects in this component(ts => gender)
+        In text-input.component you will see that the label creation is contained in a div of this same class.
+        -->
+     <div class="mb-3">
+        <label style="margin-right: 10px;">I am a: </label>
+        <label class="form-check-label">
+            <input type="radio" class="form-check-input" value="male" formControlName="gender">
+            <span>Male</span>
+        </label>
+        <label class="ms-3 form-check-label">
+            <input type="radio" class="form-check-input" value="female" formControlName="gender">
+            <span>Female</span>
+        </label>
+     </div>
 
-        <!-- Password Input -->
-        <input
-            [(ngModel)]="model.password" 
-            name="password"
-            type="password" 
-            class="form-control"
-            placeholder="Password"
-        >
+    <!-- REACT FORM - USERNAME -->
+    <!--  [type]="'text'" is optional BECAUSE we wrote type text by default in @Input() type in text-input.component.ts-->
+    <app-text-input [formControl]="$any(registerForm.controls['username'])" [label]="'Username'"
+        [type]="'text'"></app-text-input>
+
+    <!-- REACT FORM - KnownAs -->
+    <app-text-input [formControl]="$any(registerForm.controls['knownAs'])" [label]="'Known As'" [type]="'text'"></app-text-input>
+
+    <!-- REACT FORM - dateOfBirth - GOTO notes below (STUDY NOTES: TYPE - DATE (1))-->
+    <!-- OLD -->
+        <!-- <app-text-input [formControl]="$any(registerForm.controls['dateOfBirth'])" [label]="'Date  of Birth'" [type]="'date'"></app-text-input> -->
+    <app-date-picker [formControl]="$any(registerForm.controls['dateOfBirth'])" [label]="'Date of Birth'" [maxDate]="maxDate" ></app-date-picker>
+
+    <!-- REACT FORM - city -->
+    <app-text-input [formControl]="$any(registerForm.controls['city'])" [label]="'City'" ></app-text-input>
+
+    <!-- REACT FORM - country -->
+    <app-text-input [formControl]="$any(registerForm.controls['country'])" [label]="'Country'" ></app-text-input>
+
+    <!-- REACT FORM - PASSWORD -->
+    <app-text-input [formControl]="$any(registerForm.controls['password'])" [label]="'Password'"
+        [type]="'password'"></app-text-input>
+
+    <!-- REACT FORM - CONFIRM PASSWORD -->
+    <app-text-input [formControl]="$any(registerForm.controls['confirmPassword'])" [label]="'Confirm Password'"
+        [type]="'password'"></app-text-input>
+
+
+     <!-- If there are any errors in the form -->
+    <div class="row mb-3" *ngIf="this.registerFormValidationErrors">
+        <ul class="text-danger">
+            <li *ngFor="let error of registerFormValidationErrors">
+                {{error}}
+            </li>
+        </ul>
     </div>
+
     <div class="text-center">
-        <button type="submit" class="btn btn-success me-2">Register</button>
+        <!-- Disable the register button if the form is invalid -->
+        <button type="submit" [disabled]="!this.registerForm.valid" class="btn btn-success me-2">Register</button>
         <button type="button" (click)="cancel()" class="btn btn-default">Cancel</button>
     </div>
+
 </form>
 
+
+<!-- DEBUG: Testing the values and status stored in the reactive form -->
+<!-- We are using the pipe (|) to add more functionality to the variable, in this case is converting (returning) a json value -->
+<!-- <p>Form Value: {{registerForm.value | json}}</p> -->
+<!-- <p>Form Status: {{registerForm.status | json}}</p> -->
+
+
+
+
+<!-- 
+
+    STUDY NOTES - Register Form - Template Form && Reactive Form (2) - NEW
+        1. To have a better understanding of all the notes below, check register.component.html.old
+        It has the long way to do the validations for each form using Reactive Forms without using the main hub (text-input.component.html)
+        
+
+    STUDY NOTES - Reactive Forms Validators
+    1. The elements to validate are written in the component (reister.component.ts)
+        i.e.:
+            1. username: new FormControl('Hello Place Holder Text', Validators.required)
+                The element to validate in 'required'
+            2. return (control.value === control.parent?.get(matchTo)?.value)? null :  {notMatching: true};
+                1. Custom validator in the register component 
+                2. In this case the value to be validated is our own custom 'matching'.    
+                    1. The 'notMaching' was written by us
+                    2. The purpose is to add to the value into the map of the returned element ValidatorFn,
+                    which is required by matchValues() method 
+
+    2. Validating the methods in the client side using the long way:
+        1. [class.is-invalid]="registerForm.get('username')?.errors"
+            1. This is using angular bootstrap classes fro validation 
+            2. As long as you ahve angular bootsrap it will work with no problems 
+            3. Although [class.is-invalid] does work, it is not brough up by intellisense. 
+            4/ By itself, this will make it so the field is covered by a red border, indicating there is a problem 
+                1. This 'problems' are registered in the component when we use the validation 
+                2. In the from group, when we created the username object and defined the validations(username: new FormControl('Hello Place Holder Text', Validators.required))
+                    we set that the error is 'Validators.requiered'. Therefore here, we are looking for the errors. We can also be more explicit 
+        2. registerForm.get('username')?.touched
+            1. We use it with the above to check first if the form has been 'manipulated', so only dispay the error if the form is manipulated and it has the error, this
+            way if it is refreshed, then there wouldnt be any issues of diplaying the error message 
+        
+        3. div.invalid-feedback (<div class="invalid-feedback">)
+            1. This is also a bootsrap class
+            2. It will display the message inside in red if there is an issue with the input that is being validated 
+
+        4. <div class="invalid-feedback" *ngIf="registerForm.get('password')?.hasError('required')">
+            1. Handeling multiple feedback errors at once 
+            2. Do the same as the ones before - to handle a single error, but need to add a angular directive to display only if 
+            the specific error is present, in this case 'required'
+            3. All this errors are defined at the component level when creating the FormGroup
+            4. Even though the Validator uses the property 'maxLength' when stored, the object is stored as all lower case. Therefore maxLength, validated in the front-end 
+            will become 'maxlength'
+
+        5. <div class="invalid-feedback" *ngIf="registerForm.get('confirmPassword')?.hasError('notMatching')">
+            1. Custom Validator - notMatching 
+            2. In matchValues() we created a map, and if they do not match we are initializing an anonymous object of type bool, by setting its value directly 
+                notMatching: true //=> More notes in the component level 
+                This value is initialized in the controller.value.
+                The purpose of initializing the object is to store an 'error' in case it fails, this object was the notMatching. Which we are using directly as is
+                in the HTML validation.
+            
+
+
+    STUDY NOTES - Creating Resuable Component for HTML Validations (1)
+        1. This is so we can avoid all independent validations for each field 
+        2. All the possible validations required by the form will be made in a separate component, which we can 
+        then invoke as a regular component in this page 
+        3. Handled in _forms/text-input/text-input.components.ts
+
+
+    STUDY NOTES: TYPE - DATE (1)
+        1. We could input the type date directly, which will allow us to obtain the necessary text input with all the constraints 
+        that are required for the type date out of the box. 
+        But, the problem is that this will vary based on the browser and we do not have any control overs its fuctionality. 
+        2. To solve this issue, we need to create a reusable date component. As this will garanteed that the user will always have
+        the same experience using our app regardless of the browser they are using. 
+        3. CREATING A REUSABLE DATE COMPONENT: 
+            1. GOTO angular bootstrap
+            2. Search for datepicker component
+                https://valor-software.com/ngx-bootstrap/#/components/datepicker?tab=overview
+            3. As we are creating a reusable component out of this. We must create a new component. 
+            4. In the terminal we are creating this component in the _forms folder 
+                1. $ ng g c _forms/date-picker --skip-tests --dry-run
+                2. Check _forms >  date-picker for more information on the configuration
+        4. Review the STUDY NOTES: TYPE - DATE (2) to understand how the previous:
+            <app-text-input [formControl]="$any(registerForm.controls['dateOfBirth'])" [label]="'Date  of Birth'" [type]="'date'"></app-text-input>
+            WAS CHANGED TO
+            <app-date-picker [formControl]="$any(registerForm.controls['dateOfBirth'])" [label]="'Date Of Birth'" ></app-date-picker>
+            
+-->

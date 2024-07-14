@@ -1,0 +1,186 @@
+<!-- 
+STUDY NOTES - Register Form - Template Form && Reactive Form (1) - OLD
+
+This component is a previous version that was used for Template Forms and ultimately Reactive Forms of the same fields 
+This component was replaced as we are no longer using separate instances to create a user input and its validations for the reactive form i.e.
+        <div class="mb-3">
+            <label>Who is your favorite user?</label>
+            <select class="form-select">
+                <option *ngFor="let user of usersFomHomeController" [value]="user.userName">
+                {{user.userName}}
+                </option>
+            </select>
+
+We are now using a main hub to create the components at run time and its validations as well 
+    - text-input.component.ts
+
+Go to regular .component.html to check the latest version
+-->
+
+
+<!-- Removing @registerForm, as it belongs to template form, we are going to use reactive form [formGroup], we can keep the NgSubmit -->
+<!-- <form #registerForm="ngForm" (ngSubmit)="register()" autocomplete="off"> -->
+<form [formGroup]="registerForm" (ngSubmit)="register()" autocomplete="off">
+    <h2 class="text-center text-primary">Sign Up</h2>
+    <!-- Blank Space -->
+    <hr>
+    <!-- User Input Form -->
+     <!-- USERNAME -->
+    <div class="mb-3">
+        <!-- Template Form - Username Input
+        <input
+            [(ngModel)]="model.username" 
+            name="username"
+            type="text"     
+            class="form-control"
+            placeholder="Username"
+        > -->
+        <!-- Reactive Form - Username Input : NOTES ON VALIDATOR BELOW--> 
+        <input
+            formControlName = "username"
+
+            type="text"
+            [class.is-invalid]="registerForm.get('username')?.errors && registerForm.get('username')?.touched"
+            class="form-control" 
+            placeholder="Username"
+        >
+        <div class="invalid-feedback">
+            Please Enter a valid username
+        </div>
+    </div>
+
+    <!-- PASSWORD -->
+    <div class="mb-3">
+        <!-- TEST @Input() Decorator => Pass the list of users from the home component (parent to child) -->
+        <!-- drop down menu -->
+        <!-- not needed (more info on register.component.ts). No as we do not need to pass users into our form 
+            <div class="mb-3">
+            <label>Who is your favorite user?</label>
+            <select class="form-select">
+                <option *ngFor="let user of usersFomHomeController" [value]="user.userName">
+                {{user.userName}}
+                </option>
+            </select>
+        </div> -->
+
+    
+        <!-- Template Type Form - Password Input
+        <input
+            [(ngModel)]="model.password" 
+            name="password"
+            type="password" 
+            class="form-control"
+            placeholder="Password"
+        > -->
+        <!-- Reactive Type Form - Password Input -->
+        <input
+            formControlName = "password"    
+
+            type="password" 
+            [class.is-invalid]="registerForm.get('password')?.errors && registerForm.get('password')?.touched"
+            class="form-control" 
+            placeholder="Password"
+        >
+        <!-- React Form - Bootstrap angular: multiple error validation - check if it has the error 'required' defined in the component -->
+        <div class="invalid-feedback" *ngIf="registerForm.get('password')?.hasError('required')">
+            Please enter a password
+        </div>
+        <!-- React Form - Bootstrap angular:  multiple error validation - check if it has the error 'minLength' defined in the component. The error string is always all lowercase -->
+        <div class="invalid-feedback" *ngIf="registerForm.get('password')?.hasError('minlength')">
+            Password must be at least 4 characters  
+        </div>
+        <!-- React Form - Bootstrap angular:  multiple error validation - check if it has the error 'minLength' defined in the component. The error string is always all lowercase -->
+        <div class="invalid-feedback" *ngIf="registerForm.get('password')?.hasError('maxlength')">
+            Password must be at most 8 characters
+        </div>
+    </div>
+
+    <!-- CONFIRM PASSWORD -->
+    <div class="mb-3">
+        <!-- Reactive Form - Password Valiadtion Input -->
+        <input
+            formControlName = "confirmPassword"    
+
+            type="password" 
+            [class.is-invalid]="registerForm.get('confirmPassword')?.errors && registerForm.get('confirmPassword')?.touched"
+            class="form-control" 
+            placeholder="Confirm Password"
+        >
+        <div class="invalid-feedback" *ngIf="registerForm.get('confirmPassword')?.hasError('required')">
+            Plase enter a confirmation password
+        </div>
+        <!-- React Form - Bootrap Angular - Custom Validation: This field uses a custom validator that was created at the component -->
+        <div class="invalid-feedback" *ngIf="registerForm.get('confirmPassword')?.hasError('notMatching')">
+            The password does not match
+        </div>
+
+    </div>
+    <div class="text-center">
+        <button type="submit" class="btn btn-success me-2">Register</button>
+        <button type="button" (click)="cancel()" class="btn btn-default">Cancel</button>
+    </div>
+</form>
+
+
+<!-- DEBUG: Testing the values and status stored in the reactive form -->
+<!-- We are using the pipe (|) to add more functionality to the variable, in this case is converting (returning) a json value -->
+<p>Form Value: {{registerForm.value | json}}</p>
+<p>Form Status: {{registerForm.status | json}}</p>
+
+
+
+
+<!-- 
+    STUDY NOTES - Reactive Forms Validators
+    1. The elements to validate are written in the component (reister.component.ts)
+        i.e.:
+            1. username: new FormControl('Hello Place Holder Text', Validators.required)
+                The element to validate in 'required'
+            2. return (control.value === control.parent?.get(matchTo)?.value)? null :  {notMatching: true};
+                1. Custom validator in the register component 
+                2. In this case the value to be validated is our own custom 'matching'.    
+                    1. The 'notMaching' was written by us
+                    2. The purpose is to add to the value into the map of the returned element ValidatorFn,
+                    which is required by matchValues() method 
+
+    2. Validating the methods in the client side using the long way:
+        1. [class.is-invalid]="registerForm.get('username')?.errors"
+            1. This is using angular bootstrap classes fro validation 
+            2. As long as you ahve angular bootsrap it will work with no problems 
+            3. Although [class.is-invalid] does work, it is not brough up by intellisense. 
+            4/ By itself, this will make it so the field is covered by a red border, indicating there is a problem 
+                1. This 'problems' are registered in the component when we use the validation 
+                2. In the from group, when we created the username object and defined the validations(username: new FormControl('Hello Place Holder Text', Validators.required))
+                    we set that the error is 'Validators.requiered'. Therefore here, we are looking for the errors. We can also be more explicit 
+        2. registerForm.get('username')?.touched
+            1. We use it with the above to check first if the form has been 'manipulated', so only dispay the error if the form is manipulated and it has the error, this
+            way if it is refreshed, then there wouldnt be any issues of diplaying the error message 
+        
+        3. div.invalid-feedback (<div class="invalid-feedback">)
+            1. This is also a bootsrap class
+            2. It will display the message inside in red if there is an issue with the input that is being validated 
+
+        4. <div class="invalid-feedback" *ngIf="registerForm.get('password')?.hasError('required')">
+            1. Handeling multiple feedback errors at once 
+            2. Do the same as the ones before - to handle a single error, but need to add a angular directive to display only if 
+            the specific error is present, in this case 'required'
+            3. All this errors are defined at the component level when creating the FormGroup
+            4. Even though the Validator uses the property 'maxLength' when stored, the object is stored as all lower case. Therefore maxLength, validated in the front-end 
+            will become 'maxlength'
+
+        5. <div class="invalid-feedback" *ngIf="registerForm.get('confirmPassword')?.hasError('notMatching')">
+            1. Custom Validator - notMatching 
+            2. In matchValues() we created a map, and if they do not match we are initializing an anonymous object of type bool, by setting its value directly 
+                notMatching: true //=> More notes in the component level 
+                This value is initialized in the controller.value.
+                The purpose of initializing the object is to store an 'error' in case it fails, this object was the notMatching. Which we are using directly as is
+                in the HTML validation.
+            
+
+
+    STUDY NOTES - Creating Resuable Component for HTML Validations (1)
+        1. This is so we can avoid all independent validations for each field 
+        2. All the possible validations required by the form will be made in a separate component, which we can 
+        then invoke as a regular component in this page 
+        3. Handled in _forms/text-input/text-input.components.ts
+-->

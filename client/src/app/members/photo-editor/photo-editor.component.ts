@@ -67,13 +67,23 @@ export class PhotoEditorComponent implements OnInit {
       file.withCredentials = false;
      }
      //What to do after updating the file sucessfully 
-      //non of the parameters onSuccessItem are optional, so you must pass all of them 
+      //none of the parameters onSuccessItem are optional, so you must pass all of them 
      this.uploader.onSuccessItem = (item, response, status, headers) => {
       //If we have a response, parse the response, which will be a successful photo, and add it into our server  
       if(response){
         const photo = JSON.parse(response);
         //Update the member that we are receiving (Input variable)
         this.member?.photos.push(photo);
+
+        /*
+          If it is the first photo by the user, which should be.
+          Then, update the member protrait and the user menu on top portrait to this photo 
+        */
+        if (photo.isMain && this.user && this.member) {
+          this.user.photoUrl = photo.url;
+          this.member.photoUrl = photo.url; 
+          this.accountService.setCurrentUser(this.user); //Notes on (setMainPhoto())
+       }
       }
      }
   }

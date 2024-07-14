@@ -145,6 +145,10 @@
               constructor(private accountService: AccountService){ 
           1. Instead of currentUser$ | async it will be 
                 this.accountService.currentUser$ | async
+      6. For the pipes (|) in general you can use them to implement additional functionality to a variable, how it behaves in the front-end 
+          1. In this same page, we are also using the pipe to set the value to Title case
+            1. {user.username | titlecase}} => Lisa
+          2.  You can also use the pipe to return data as Json (|json)
 
 
 STUDY NOTES - ROUTING 

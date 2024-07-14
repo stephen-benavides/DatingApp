@@ -1,0 +1,86 @@
+<!--  *REUSABLE CODE AS IS*
+    - Resusable MAIN HUB to handle all the validations for the user inputs 
+    - Currently used by register component    
+-->
+
+<!-- PASSWORD -->
+ <!-- COPIED FROM: register.component.html for tthe easy creation of this .html and component to use everywhere -->
+<div class="mb-3">
+    <!-- Reactive Form - Password Input 
+        NOTES BELOW:
+            - Replacing formControlName
+                - formControlName = "password"  => [formControl]="ngControl.control" => [formControl]="control"
+            - Replacing <div class="invalid-feedback" *ngIf="registerForm.get('username')?.hasError('required')">
+                - <div class="invalid-feedback" *ngIf="control.errors?.['required']">
+
+            - Replacing type="password" for the input decorator 'type' in this compnent 
+            - Replacing placeholder="Password" for the input decorator 'label' in this compnent 
+    -->
+    <input
+        
+        [formControl]="control"
+
+        type="{{type}}" 
+        [class.is-invalid]="ngControl.invalid && ngControl.touched" 
+        class="form-control" 
+        placeholder="{{label}}"
+    >
+    <!-- React Form - Bootstrap angular: multiple error validation - check if it has the error 'required' defined in the component -->
+    <div class="invalid-feedback" *ngIf="control.errors?.['required']">
+        Please enter a {{label}}
+    </div>
+    <!-- React Form - Bootstrap angular:  multiple error validation - check if it has the error 'minLength' defined in the component. The error string is always all lowercase -->
+    <div class="invalid-feedback" *ngIf="control.errors?.['minlength']">
+        <!-- GET THE REQUIRED LENGTH THAT WAS SUPPLIED IN THE VALIDATOR (register.component.ts) -->
+        {{label}} must be at least {{control.errors?.['minlength'].requieredLength}} characters
+    </div>
+    <!-- React Form - Bootstrap angular:  multiple error validation - check if it has the error 'minLength' defined in the component. The error string is always all lowercase -->
+    <div class="invalid-feedback" *ngIf="control.errors?.['maxlength']">
+        {{label}} must be at most {{control.errors?.['maxlength'].requieredLength}} characters
+    </div>
+
+    <!-- Adding validator for confirm password -->
+     <div class="invalid-feedback" *ngIf="control.errors?.['notMatching']">
+        Passwords do not match
+    </div>
+</div>
+
+
+
+<!-- 
+    STUDY NOTES - Creating Resuable Component for HTML Validations (3) 
+    
+        1. MAIN HUB
+            1. This code comes directly copy pasted from register.component.html.
+            We are using the password, as it has most of the ngIf we are going to be using. 
+            We are going to be adding new ngIfs directive based on the requirements. This will be our MAIN HUB for the validations. 
+
+        2. REPLACING (egisterForm.get('password')?)
+            1. As we are getting the form directly into this component through the ngControl property (on this component). We do not 
+            need to 'get' the type, as we can do so directly 
+            2. We can replace 
+                1. registerForm.get('password')?.errors => ngControl.invalid 
+                    1. This will indicate if any part of the controller is invalid in general 
+                2. egisterForm.get('password')?.touched => ngControl.touched 
+                    1. This will indicate in generalm if the form has been modified. 
+
+        3. REPLACING (formControlName) => [formControl]="ngControl.control"
+            1. instead of bounding a specific object, we want to pass the entire form control object. 
+            2. We used the self to make sure that each field is handled separetly without saving information from the previous one.
+                1. In this case, previous one refers to username or password, etc. instead of a new form altogether. 
+            3. We dont need to specify the field, only let angular now that anything that uses this COMPONENT will be required to be validated. 
+            4. the ngControl.control specifies the current control that is using this component
+
+            5. [formControl]="ngControl.control" throws an error, due to extrict mode
+                1. We can solve this issue by casting it. Using $any(). This overrides the Typescript convention
+                2. We can also do so (currently on this component) by creating a getter to cast it for us 
+                    1. register.component.ts => get control(): FormControl{
+                    2. With this 'getter' control we can replace registerForm.get('password')?
+                    This is because we are using the CURRENT CONTROL called so we dont need to specify a 'label'
+
+            
+        4. Replacing the type and placeholder. 
+            1. As this will be our hub for all our user inputs, we can set input properties to get the type and the label of the field
+            To reuse in the application. 
+            2. We are using intepolation to communicate with the component to get those values
+-->

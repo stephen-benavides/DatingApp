@@ -5,7 +5,7 @@ import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http'; //Need
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'; //Added for ng bootstrap
-import { FormsModule } from '@angular/forms'; //Added for angular forms 
+import { FormsModule, ReactiveFormsModule } from '@angular/forms'; //Added for angular forms 
 import { NavComponent } from './nav/nav.component';
 import { HomeComponent } from './home/home.component';
 import { RegisterComponent } from './register/register.component';
@@ -23,6 +23,8 @@ import { JwtInterceptor } from './_interceptors/jwt.interceptor';
 import { MemberEditComponent } from './members/member-edit/member-edit.component';
 import { LoadingInterceptor } from './_interceptors/loading.interceptor';
 import { PhotoEditorComponent } from './members/photo-editor/photo-editor.component';
+import { TextInputComponent } from './_forms/text-input/text-input.component';
+import { DatePickerComponent } from './_forms/date-picker/date-picker.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +41,9 @@ import { PhotoEditorComponent } from './members/photo-editor/photo-editor.compon
     ServerErrorComponent,
     MemberCardComponent,
     MemberEditComponent,
-    PhotoEditorComponent
+    PhotoEditorComponent,
+    TextInputComponent,
+    DatePickerComponent
   ],
   imports: [
     BrowserModule,
@@ -49,6 +53,7 @@ import { PhotoEditorComponent } from './members/photo-editor/photo-editor.compon
     HttpClientModule,
     BrowserAnimationsModule,
     FormsModule,
+    ReactiveFormsModule,
     
     /*
       //Adding 3rd party modules on Shared Module "Study Notes" below for more info (shared.module.ts => SharedModule)
@@ -87,9 +92,16 @@ export class AppModule { }
         2. This was added using the CLI - following the steps in the bootstrap page 
         3. https://valor-software.com/ngx-bootstrap/#/documentation
       4. FormsModule
+        0. To use template forms 
+          1. Template forms uses the ngModule, as well as the properties directly into the form itself
         1. To use ng(angular) form functionality 
         2. #loginForm="ngForm" => nav.component.html
         3. <Input name="">
+
+      5. ReactiveFormsModule
+        1. Use for reactive forms 
+        2. Store variables into controllers within the .ts document itself 
+        3. Implentation on "register.component.ts"
       
 
 

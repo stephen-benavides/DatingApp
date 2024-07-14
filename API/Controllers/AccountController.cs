@@ -9,17 +9,20 @@ using System.Security.Authentication;
 using API.Interfaces;
 using API.DTO;
 using Microsoft.AspNetCore.Authorization;
+using AutoMapper;
 
 namespace API.Controllers;
 public class AccountController : BaseApiController
 {
     private readonly DataContext _dataContext;
     private readonly ITokenService _tokenService;
+    private readonly IMapper _mapper;
 
-    public AccountController(DataContext dataContext, ITokenService tokenService)
+    public AccountController(DataContext dataContext, ITokenService tokenService, IMapper mapper)
     {
         this._dataContext = dataContext;
         this._tokenService = tokenService;
+        this._mapper = mapper;
     }
     //Register a new user account
     [HttpPost("register")] // api/account/register
@@ -34,6 +37,9 @@ public class AccountController : BaseApiController
         if(await UserExists(registerDto.Username))
             return BadRequest("Username is taken");
 
+        //From the register dto map the elements to the appUser we are going to be using 
+        var user = _mapper.Map<AppUser>(registerDto);
+
         //Hash the password and salt it 
         //Initializing the HASH512 with no parameters, created an automatic 'key' for the hash
         using var hmac = new HMACSHA512(); 
@@ -41,19 +47,27 @@ public class AccountController : BaseApiController
         var hmacKey = hmac.Key;
 
         //Map the new user to the data obejct 
+        /*
+        //This snippet has been replaced, and now instead of the appUser directly, we are using the automapper (user)
         AppUser appUser = new AppUser(){
             UserName = registerDto.Username.ToLower(),
             PasswordHash = hmacPassword,
             PasswordSalt = hmacKey
         };
+        */
+        user.UserName = registerDto.Username.ToLower();
+        user.PasswordHash = hmacPassword;
+        user.PasswordSalt = hmacKey;
+        
 
         //Save the user in the DB 
-        _dataContext.Users.Add(appUser);
+        _dataContext.Users.Add(user);
         await _dataContext.SaveChangesAsync();
         return new UserDto{
-            Username = appUser.UserName,
+            Username = user.UserName,
             //To check the token information GOTO: http://jwt.ms/ and paste the token
-            Token = _tokenService.CreateToken(appUser)
+            Token = _tokenService.CreateToken(user),
+            KnownAs = user.KnownAs
         };
     }
 
@@ -84,13 +98,14 @@ public class AccountController : BaseApiController
         return new UserDto{
             Username = userInDb.UserName,
             Token = _tokenService.CreateToken(userInDb),
-            PhotoUrl = userInDb.Photos.SingleOrDefault(photo => photo.IsMain)?.Url //=> There may or may not be a photo when the user first logins into the application
+            PhotoUrl = userInDb.Photos.SingleOrDefault(photo => photo.IsMain)?.Url, //=> There may or may not be a photo when the user first logins into the application
             /*PhotoUrl is a related entity, it means that it has a reference in user only.
             Thus, we must eagerly loaded, as it is required bby entity framework  
                 1. To make it so it is eagerly loaded, use the .include() in the request - line67. To load the related object of Photos
                 2. More notes on eagerly loaded objects using entity framework on OneNote > EntitiyFramework > Section 7 
                 3. Remember, EF does not load related entities by default
             */
+            KnownAs = userInDb.KnownAs
         };
     }
 }
