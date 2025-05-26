@@ -5,6 +5,8 @@ import { GalleryModule, ImageItem } from 'ng-gallery';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { Member } from 'src/app/_models/member';
 import { MembersService } from 'src/app/_services/members.service';
+import { TimeagoModule } from "ngx-timeago";
+
 
 @Component({
   selector: 'app-member-detail',
@@ -19,7 +21,9 @@ import { MembersService } from 'src/app/_services/members.service';
     //Needed for the tabset (ng bootstrap tabs)
     TabsModule,
     //ng gallery module - Notes Below
-    GalleryModule
+    GalleryModule,
+    //ngx-timeago, Notes on shared.module.ts > TimeagoModule
+    TimeagoModule
   ]
 })
 export class MemberDetailComponent implements OnInit {
@@ -77,6 +81,10 @@ export class MemberDetailComponent implements OnInit {
 /* STUDY NOTES - Stand Alone Component TS
   - Detailed notes on OneNote > Angular > Components > STANDALONE COMPONENTS
   - Allows us to create component that are not attached to an ng module, thus can operate on their own
+  - Always make sure to go over the installation process of a module that you want to import in to the standalone component.
+    1. Sometimes you can straight up import it into the standalaone component itself (ng-gallery).
+    2. Othertimes you must initialize the component in a module before importing it (ngx-timeago).
+      1. In this case the timeago module needed to first be imported into the shared.module.ts (as we are using this module to host all our third party modules) to then be able to use it in ouor standalone component. 
 
   STUDY NOTES - GalleryModule
     1. https://ngx-gallery.netlify.app/#/getting-started/gallery
@@ -84,4 +92,6 @@ export class MemberDetailComponent implements OnInit {
     3. Here we are setting this component similar to a shared.module.ts, to import the packages that we are going to be using
     4. Then you can follow the notes on this component .html 
     5. we need to load our images at run time 
+
+    
 */

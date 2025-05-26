@@ -24,7 +24,7 @@ public class Seed
             return;
 
         //Read the data in the json testing file
-        var userData = await File.ReadAllTextAsync("Data/UserSeedData,json");
+        var userData = await File.ReadAllTextAsync("Data/UserSeedData.json");
         //Set options, in case the JSON is not cased properly, so it will be easier to parse
         var options = new JsonSerializerOptions{
             PropertyNameCaseInsensitive = true

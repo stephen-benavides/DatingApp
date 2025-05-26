@@ -1,8 +1,10 @@
 using API.DTO;
 using API.Entities;
+using API.Helpers;
 using API.Interfaces;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Data;
@@ -28,6 +30,7 @@ public class UserRepository : IUserRepository
         .SingleOrDefaultAsync();
     }
 
+    /* Replacing this method to now be able to paginate - Notes Below - PAGINATION (5)
     public async Task<IEnumerable<MemberDto>> GetMembersAsync()
     {
         //GOTO - Notes below to check how reflection is implemented manually (without automapper)
@@ -35,6 +38,40 @@ public class UserRepository : IUserRepository
         .ProjectTo<MemberDto>(_mapper.ConfigurationProvider)
         .ToListAsync();
         
+    }
+    */
+    /// <summary>
+    /// Get a list of all the members associated to a user - paginated 
+    /// </summary>
+    /// <param name="userParams">user params that contain pagination information to be returned to the client</param>
+    /// <returns></returns>
+    public async Task<PagedList<MemberDto>> GetMembersAsync(UserParams userParams)
+    {
+        //var query = _context.Users
+        //.ProjectTo<MemberDto>(_mapper.ConfigurationProvider)
+        //.AsNoTracking(); //This is not required, we are just letting entity framework now that they should not track this query (best practices)
+
+        //Needs to be AsQueryable, otherwise we wont be able to use the where parameters
+        var query = _context.Users.AsQueryable();
+        query = query.Where(u => u.UserName != userParams.CurrentUserName); //Return all users BUT excluding the current user, as it is not required in the list
+        query = query.Where(u => u.Gender == userParams.Gender); //From the above list remove all members from the same sex
+        query = userParams.OrderBy switch //switch case to set the order by created or lastActive based on input
+        {
+            "created" => query.OrderByDescending(u => u.Created),
+            _ => query.OrderByDescending(u => u.LastActive)
+        };
+
+        //Substract the max age requierement from today's date; -1 to include birthdays
+        var minDob = DateOnly.FromDateTime(DateTime.Today.AddYears(-userParams.MaxAge - 1));
+        var maxDob = DateOnly.FromDateTime(DateTime.Today.AddYears(-userParams.MinAge));
+
+        query = query.Where(u => u.DateOfBirth >= minDob && u.DateOfBirth <= maxDob);
+
+        //Notes below - PAGINATION (5)
+        return await PagedList<MemberDto>.CreateAsync(
+            query.AsNoTracking().ProjectTo<MemberDto>(_mapper.ConfigurationProvider),
+            userParams.PageNumber,
+            userParams.PageSize);
     }
 
     public async Task<AppUser> GetUserByIdAsync(int id)
@@ -53,7 +90,7 @@ public class UserRepository : IUserRepository
 
     public async Task<IEnumerable<AppUser>> GetUsersAsync()
     {
-        //Using Lazy Loading to include the photos into the elements we also want to load for the user. 
+        //Using eagerly Loading to include the photos into the elements we also want to load for the user. 
         return await _context.Users
         .Include(appUser => appUser.Photos)
         .ToListAsync();
@@ -133,4 +170,18 @@ public class UserRepository : IUserRepository
                 2. the configuration is comming from the Program.cs, we set the property when we initialize the automapper (Extensions > ApplicationServicesExtensions)
                 3. Automapper does all the configurations for all 
                 4. Do not forget to implement the IMapper interface to get the ConfigurationProvider 
+
+
+
+    STUDY NOTES - PAGINATION (5)
+    1. Implementing the Pagination in our respository in GetMembersAsync(UserParams userParams)
+    2. In the controller we are letting know that the client will be pasing the parameters from the query string in the URL.
+        1. Therefore we need to update the signature in the implementation by using the [FromQuery] in the method
+        2. We need to be explicit, otherwise it won't work 
+        3. Here it does not matter because this communicates using data comming in from the controller, so it must be done at the controller level only
+    3. return await PagedList<MemberDto>.CreateAsync
+        1. We are able to load this as follows because: 
+            1. CreateAsync is an static method. Thus, we do not need to initialized 
+            2. The CreateAsync itslef already returns a PagedList, which is being expected by the controller. 
+        2. From the user we are able to populate this class, and we are able to track the changes because of the AddRange method inside the ctor of PagedList (Pagination (1) notes)
 */

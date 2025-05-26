@@ -16,4 +16,5 @@ STUDY NOTES - CLOUDINARY (1)
         1. In this project, we are adding all our external services on: API > Extensions > ApplicationServicesExtensions
         2. services.Configure<CloduinarySettings>(configuration.GetSection("CloudinarySettings")); 
             1. the .configure is used to bind to this class from the config file. 
+                1. AKA- mapping the objects from the json file to the properties in this class to return a list typeof(this)
 */

@@ -120,7 +120,7 @@ export class PhotoEditorComponent implements OnInit {
         //If there is a member, 
         if(this.member){
           //redraw the the member photos without the one we want to remove for the client site
-          //filter - returns the elements in the array based on the callback function, in this case, returns the photos where the id is the one we want to remove 
+          //filter - returns the elements in the array based on the callback function, in this case, returns all the photos except for the 'deleted' photo
           this.member.photos = this.member.photos.filter(p => p.id !== photoId);
         }
       }

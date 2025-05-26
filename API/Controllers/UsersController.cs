@@ -5,6 +5,7 @@ using API.DTO;
 using API.Entities;
 using API.Entities.DTO;
 using API.Extensions;
+using API.Helpers;
 using API.Helpers.IPhotoService;
 using API.Interfaces;
 using AutoMapper;
@@ -21,7 +22,7 @@ public class UsersController : BaseApiController
     private readonly IMapper _mapper;
     private readonly IPhotoService _photoService;
 
-    /*Dependency Injection
+    /*Dependency Injection - initialization handled inside ApplicationServicesExtension.cs (services.AddScoped(), etc)
         1. IUserRepository - DB 
         2. IMapper - maps the objects from the client to the DB and viceversa (Helpers > AutoMappersProfile)
         3. IPhotoService - cloduinary service to handle all the submission of photos
@@ -40,19 +41,55 @@ public class UsersController : BaseApiController
         2. async method that are implemented requiere tue await keyword 
     */
     //[AllowAnonymous] /*Active for testing purposes*/
-    [HttpGet] // /api/users
-    public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers()
-    {
-        /* [Not Needed] Mapping directly in the UserRepository
-        //Get the user from the DB
-        var users = await _userRepository.GetUsersAsync(); 
-        //Map the users in the DB with the users to be returned - MemberDto
-        var usersToReturn = _mapper.Map<IEnumerable<MemberDto>>(users);
-        
-        return Ok(usersToReturn);
-        */
-        return Ok(await _userRepository.GetMembersAsync());
+
+
+    /* Not needed after updating the GetMembersAsync() to enable pagination (PAGINATION (6)- Study Notes) */
+    //[HttpGet] // /api/users
+    //public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers()
+    //{
+    //    /* [Not Needed] Mapping directly in the UserRepository
+    //    //Get the user from the DB
+    //    var users = await _userRepository.GetUsersAsync(); 
+    //    //Map the users in the DB with the users to be returned - MemberDto
+    //    var usersToReturn = _mapper.Map<IEnumerable<MemberDto>>(users);
+    //    
+    //    return Ok(usersToReturn);
+    //    */
+    //    
+    //    return Ok(await _userRepository.GetMembersAsync());
+    //}
+
+    [HttpGet]
+    //We are passing the params in the query string (URL). therefore we need to provide a hint to the controller about the location of this params. 
+    //Notes Below - PAGINATION (6)
+    public async Task<ActionResult<PagedList<MemberDto>>> GetUsers([FromQuery]UserParams userParams){
+
+        //Get the current User -> using the claims pincipal (custom extension)
+            //We need the current user to set default values based on the data comming in from the client and update the userParams with defaulted value from the current user
+                //Make sure async method have the await keyword, else you wont have access to its properties
+        var currentUser = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
+        userParams.CurrentUserName = currentUser.UserName;
+
+        //Check if the gender that is comming in from the client is empty, to set a default based on the gender of our current user 
+        if(string.IsNullOrEmpty(userParams.Gender)){
+            //if the user is male, then return only female members and viceversa
+            userParams.Gender = (currentUser.Gender == "male") ? "female" : "male";
+        }
+
+        //passing the parameters into the user repository to obtained a paginated list
+        var users = await _userRepository.GetMembersAsync(userParams);
+
+        //custom extension method - Passing custom pagination header to client - Notes Below
+        Response.AddPaginationHeader(new PaginationHeader(
+            users.CurrentPage, 
+            users.PageSize, 
+            users.TotalCount,
+            users.TotalPages
+        ));
+
+        return Ok(users);
     }
+
 
     /*
     [HttpGet("{id}")] // /api/users/2
@@ -238,6 +275,11 @@ public class UsersController : BaseApiController
     /* STUDY NOTES - Using [Authorize] and [AllowAnonymous] for authenthication and authorization
         [AllowAnonymous] bypasses authorization statements. 
         If you combine [AllowAnonymous] and an [Authorize] attribute, the [Authorize] attributes are ignored.
+            1. This attributes are loaded on Program.cs 
+                app.UseAuthentication();
+                app.UseAuthorization();
+            2. But to load the authentication and Authorization We must do so in the 'ApplicationServicesExtensions.cs' which is our custom service layer to add in the app
+                1. services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)  
 
 
         STUDY NOTES - Mapper Implementation in Controller
@@ -280,6 +322,23 @@ public class UsersController : BaseApiController
                 2. Entity Framework, checks all the changes made through their own data caching, therefore if no "new" changes are made, then it won't go through the DB
                     So in this code, even if you are authenthicated succesfully and hit the "save" button, it will still fail and return BadRequest("Failed to update user"); 
                     as no "new changes" will be made
+
+
+
+        STUDY NOTES - PAGINATION (6)
+            1. GetUsers() 
+                1. Replacing this method as we are no longer retuning a list of elements but rather a paginated list 
+                2. Go to the previous pagination study notes for further understanding 
+                3. In the controller we are letting know that the client will be pasing the parameters from the query string in the URL.
+                    1. Therefore we need to updatre the signature in the implementation by using the [FromQuery] in the method
+                    2. We need to be explicit, otherwise it won't work 
+                    3. Here it does not matter because this communicates using data comming in from the controller, so it must be done at the controller level only
+                
+                4. Passing pagination header to client
+                    1. Using the custom header we created in the extension method 
+                        1. PaginationHeader.cs 
+
+                    
 
     */
 }

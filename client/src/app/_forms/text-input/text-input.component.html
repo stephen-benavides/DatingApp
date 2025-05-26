@@ -32,11 +32,11 @@
     <!-- React Form - Bootstrap angular:  multiple error validation - check if it has the error 'minLength' defined in the component. The error string is always all lowercase -->
     <div class="invalid-feedback" *ngIf="control.errors?.['minlength']">
         <!-- GET THE REQUIRED LENGTH THAT WAS SUPPLIED IN THE VALIDATOR (register.component.ts) -->
-        {{label}} must be at least {{control.errors?.['minlength'].requieredLength}} characters
+        {{label}} must be at least {{control.errors?.['minlength'].requiredLength}} characters
     </div>
     <!-- React Form - Bootstrap angular:  multiple error validation - check if it has the error 'minLength' defined in the component. The error string is always all lowercase -->
     <div class="invalid-feedback" *ngIf="control.errors?.['maxlength']">
-        {{label}} must be at most {{control.errors?.['maxlength'].requieredLength}} characters
+        {{label}} must be at most {{control.errors?.['maxlength'].requiredLength}} characters
     </div>
 
     <!-- Adding validator for confirm password -->

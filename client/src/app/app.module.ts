@@ -33,7 +33,7 @@ import { DatePickerComponent } from './_forms/date-picker/date-picker.component'
     HomeComponent,
     RegisterComponent,
     MemberListComponent,
-    //MemberDetailComponent, Remove it, to convert it to - STUDY NOTES: Stand Alone Component 
+    //MemberDetailComponent, Remove it, to convert it to - STUDY NOTES - Stand Alone Component 
     ListsComponent,
     MessagesComponent,
     TestErrorComponent,
@@ -76,7 +76,7 @@ export class AppModule { }
 
 
 /*
-  Study Notes - Explanation on Angular Root Module
+  STUDY NOTES - Explanation on Angular Root Module
     1. This is the root node 
     2. Everything depends on root to allow for SPA functionality 
     3. We added the following imports which already exist in NG but requiere to be explicetely invoked to use
@@ -105,7 +105,7 @@ export class AppModule { }
       
 
 
-  Installation of 3rd party libraries 
+  STUDY NOTES - Installation of 3rd party libraries 
     1. Such as toastr 
     2. In OneNote => Angular => 3rd Party Libraries 
     3. Installing third party libraries such as bootstrap requieres to check the current version of angular and checking a compatible version to install 
@@ -127,19 +127,19 @@ export class AppModule { }
 
 
   
-  Shared Module 
-    1. Creating a new module for upkeep 
-    2. It allows to set our custom modules (3rd parties) on a different file, to make things cleaner 
-      1. Such as BsDropDOwnModule and ToastrModule 
-    3. How to create one 
-      1. CLI 
-      2. ng g m [folderName/elementName]
-      3. ng g m _modules/shared --dry-run 
-        1. This will CREATE src/app/_modules/shared/shared.module.ts (192 bytes)
-        2. a new FOLDER 'shared' which we do not want. so to avoid that, use the switch --flat 
-        3.  $ ng g m _modules/shared --flat --dry-run
-            CREATE src/app/_modules/shared.module.ts (192 bytes)
-    4. More notes on ./app/_modules/shared.module.ts => STUDY NOTES 
+    STUDY NOTES - Shared Module 
+      1. Creating a new module for upkeep 
+      2. It allows to set our custom modules (3rd parties) on a different file, to make things cleaner 
+        1. Such as BsDropDOwnModule and ToastrModule 
+      3. How to create one 
+        1. CLI 
+        2. ng g m [folderName/elementName]
+        3. ng g m _modules/shared --dry-run 
+          1. This will CREATE src/app/_modules/shared/shared.module.ts (192 bytes)
+          2. a new FOLDER 'shared' which we do not want. so to avoid that, use the switch --flat 
+          3.  $ ng g m _modules/shared --flat --dry-run
+              CREATE src/app/_modules/shared.module.ts (192 bytes)
+      4. More notes on ./app/_modules/shared.module.ts => STUDY NOTES 
 
   
     STUDY NOTES - Providers (all interceptors)

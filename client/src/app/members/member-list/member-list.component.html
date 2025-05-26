@@ -1,7 +1,98 @@
+<div class="text-center mt-3">
+    <h1>Your matches - {{pagination?.totalItems}} found</h1>
+</div>
+<!-- Container with all the user filtering options -->
+<div id="filterMenu" class="container mt-3" *ngIf="userParams">
+    <!-- using template form => STUDY NOTES - Register Form - Template Form && Reactive Form (2) --> 
+     <!-- The elements will be inline mb-3 -->
+     <form #form="ngForm" class="d-flex mb-3" (ngSubmit)="loadMembers()" autocomplete="off">
+        <!-- Min Age -->
+        <!-- Margins (mx-2) -->
+        <div class="d-flex mx-2">
+            <label class="col-form-label">Age from: </label>
+            <!-- All inputs in Template Form form type, requiere a name to identify the property -->
+            <input 
+                type="number" 
+                class="form-control ms-1" 
+                style="width: 70px" 
+                name="minAge" 
+                [(ngModel)]="userParams.minAge">
+        </div>
+        <!-- Max Age -->
+        <div class="d-flex mx-2">
+            <label class="col-form-label">Age to: </label>
+            <!-- All inputs in Template Form form type, requiere a name to identify the property -->
+            <input 
+                type="number" 
+                class="form-control ms-1" 
+                style="width: 70px" 
+                name="maxAge" 
+                [(ngModel)]="userParams.maxAge">
+        </div>
+        <!-- gender -->
+         <div class="d-flex px-2">
+            <label class="col-form-label me-2">Show: </label>
+            <!-- Select Menu To Choose Gender-->
+             <select 
+                name="gender"
+                style="width: 130px"
+                class="form-select ms-1"
+                [(ngModel)]="userParams.gender">
+                <!-- Display the genders from the anonimous object list in this component -->
+                <option *ngFor="let gender of genderList" [value]="gender.value">
+                    {{gender.display}}
+                </option>
+             </select>
+         </div>
+         <!-- Apply Filters Button - submitting will by default execute the method in (ngSubmit) on this form-->
+        <button class="btn btn-primary ms-1" type="submit">Apply Filters</button>
+        <!-- Reset Filters Button -->
+        <button class="btn btn-info ms-1" type="button" (click)="resetFilter()">Reset Filter</button>
+        <!-- Order By Buttons -->
+         <div class="col">
+            <div class="btn-group float-end">
+                <button 
+                    class="btn btn-primary"
+                    name="orderBy"
+                    btnRadio="lastActive"
+                    (click)="loadMembers()"
+                    [(ngModel)]="userParams.orderBy">Last Active</button>
+                <button 
+                    class="btn btn-primary"
+                    name="orderBy" 
+                    btnRadio="created"
+                    (click)="loadMembers()"
+                    [(ngModel)]="userParams.orderBy">Newest Members</button>
+            </div>
+         </div>
+     </form>
+</div>
+
 <div class="row"> 
     <!-- Implementing async pipe to automatically subscribe and unsubscribe -->
-    <div class="col-2" *ngFor="let member of this.members$ | async">
-        <!-- Paren child relationship with member-card (@Input() member) -->
+    <div class="col-2" *ngFor="let member of this.members">
+        <!-- Paren child relationship with member-card (@Input() member) - It displays all the member cards-->
         <app-member-card [member]="member"></app-member-card>
     </div>
 </div>
+
+<!-- Pagination (shared.module.ts -> pagination) -->
+ <!-- Only show this div if the 'pagination' has been successfully call from the component.ts -->
+    <!-- 
+        we are using the double binding [(ngModel)] to bind our component and the pagination component
+    -->
+ <div class="d-flex justify-content-center" *ngIf="pagination">
+    <pagination 
+        [boundaryLinks]="true"  
+        [totalItems]= "pagination.totalItems"
+        [itemsPerPage]="pagination.itemsPerPage"
+        [maxSize]="10"
+        [(ngModel)]="pagination.currentPage"
+        (pageChanged)="pageChanged($event)"
+        previousText="&lsaquo;" 
+        nextText="&rsaquo;" 
+        firstText="&laquo;" 
+        lastText="&raquo;">
+
+    </pagination>
+ </div>

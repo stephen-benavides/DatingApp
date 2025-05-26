@@ -46,15 +46,18 @@ public static class ApplicationServicesExtensions
         services.Configure<CloduinarySettings>(configuration.GetSection("CloudinarySettings")); 
         //Initializing our IPhotoService interface with PhotoService implementation 
         services.AddScoped<IPhotoService, PhotoService>();
+        //Injecting the LogUserActivity service to update the 'LastActive' property for the logged user everytime they perform an operation in our API
+        services.AddScoped<LogUserActivity>();
 
         #endregion
-        
+
         #region JWT Token Authentication Service
         /*
         Adding the middleware services requiered to authenthicate JWT tokens.
         The services can be in any order. But the actual middle ware -> below app-- like app.useAhorization() must be in a particular order,
         otherwise it will stop before getting into yoour logic if the order is not right 
             Nuget- Microsoft.AspNetCore.Authentication.JwtBearer by Microsoft
+
         */
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options => 
@@ -98,7 +101,7 @@ STUDY NOTES - Configuration
 STUDY NOTES - Custom Extension Method to apply custom services into Program.cs
     - To create a Jason Web Token (JWT) for authenthication and authorization 
     - Add authenthication and authorization variables 
-    - Adding custom depenency Injection 
+    - Adding custom depenency Injection (The controllers gets its data that is DI from here)
         - Transient 
             - Transient lifetime services are created each time they are requested from the service container. This lifetime works best for lightweight, stateless services.
             - WHEN TO USE: 
@@ -106,7 +109,7 @@ STUDY NOTES - Custom Extension Method to apply custom services into Program.cs
                 * When you need a separate instance of a service every time it's injected.
                 * Examples include services that provide calculation utilities or simple functions.
 
-        - Scoped 
+        - Scoped (services.AddScoped)
             - Scoped lifetime services are created once per client request (connection). This means that a single instance is used throughout the request and then discarded.
             - WHEN TO USE: 
                 * For services that need to maintain state within a single request.

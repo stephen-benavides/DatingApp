@@ -36,7 +36,9 @@ public class TokenService : ITokenService
         var claims = new List<Claim>(){
             //Every request must be surrounded in a claim to be added as a subject in the request, we can add more to it later 
             //This reflects what the user is claiming themselves to be 
-            new Claim(JwtRegisteredClaimNames.NameId, user.UserName)
+            new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName),
+            //Adding a new clain to get the userId 
+            new Claim(JwtRegisteredClaimNames.NameId, user.Id.ToString())
         };
         //Credentials - certificate with the summetric key that will be used to encrypt the request 
         var creds = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);

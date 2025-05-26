@@ -63,11 +63,13 @@ public class AccountController : BaseApiController
         //Save the user in the DB 
         _dataContext.Users.Add(user);
         await _dataContext.SaveChangesAsync();
-        return new UserDto{
+        return new UserDto
+        {
             Username = user.UserName,
             //To check the token information GOTO: http://jwt.ms/ and paste the token
             Token = _tokenService.CreateToken(user),
-            KnownAs = user.KnownAs
+            KnownAs = user.KnownAs,
+            Gender = user.Gender
         };
     }
 
@@ -95,7 +97,8 @@ public class AccountController : BaseApiController
             if(clientHashedPassword[i] != userInDb.PasswordHash[i])
                 return Unauthorized("Password does not match"); 
         }
-        return new UserDto{
+        return new UserDto
+        {
             Username = userInDb.UserName,
             Token = _tokenService.CreateToken(userInDb),
             PhotoUrl = userInDb.Photos.SingleOrDefault(photo => photo.IsMain)?.Url, //=> There may or may not be a photo when the user first logins into the application
@@ -105,7 +108,8 @@ public class AccountController : BaseApiController
                 2. More notes on eagerly loaded objects using entity framework on OneNote > EntitiyFramework > Section 7 
                 3. Remember, EF does not load related entities by default
             */
-            KnownAs = userInDb.KnownAs
+            KnownAs = userInDb.KnownAs,
+            Gender = userInDb.Gender
         };
     }
 }

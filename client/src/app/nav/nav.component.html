@@ -33,7 +33,7 @@
       <div  class="dropdown" *ngIf="(currentUser$ | async) as user" dropdown>
         <!-- Adding the current user's image -->
         <img src= "{{user.photoUrl || './assets/user.png'}}" alt="user photo" class="me-2">
-        <a id="welcomeButton" class="dropdown-toggle text-light text-decoration" dropdownToggle>Welcome {{user.username | titlecase}}</a>
+        <a id="welcomeButton" class="dropdown-toggle text-light text-decoration" dropdownToggle>Welcome {{user.knownAs | titlecase}}</a>
         <div class="dropdown-menu" *dropdownMenu>
           <!-- routerLink can be anything, as long as this 'path' is the same one as the one in app-routing.module.ts -->
           <a  class="dropdown-item" routerLink="/member/edit">Edit Profile</a>

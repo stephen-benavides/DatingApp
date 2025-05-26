@@ -53,7 +53,7 @@ export class TestErrorComponent implements OnInit {
       //It is never going to hit next, because anything other than 20X (ok) is considered an error by angular 
       next: (response) => {console.log(response)},
       error: (error) => {console.log(error)},
-      complete: () => console.log("Reuqest Completed")
+      complete: () => console.log("Request Completed")
     });
   }
 
@@ -73,7 +73,7 @@ export class TestErrorComponent implements OnInit {
               of exceptions it is easier to read and handle 
          */
       },
-      complete: () => console.log("Reuqest Completed")
+      complete: () => console.log("Request Completed")
     });
   }
 }

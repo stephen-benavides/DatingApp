@@ -30,7 +30,7 @@ Go to regular .component.html to check the latest version
         <!-- Template Form - Username Input
         <input
             [(ngModel)]="model.username" 
-            name="username"
+            name="username" <!-- All template forms requiere a name to identify the form -->
             type="text"     
             class="form-control"
             placeholder="Username"

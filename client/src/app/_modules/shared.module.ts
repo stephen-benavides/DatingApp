@@ -6,7 +6,9 @@ import { TabsModule } from 'ngx-bootstrap/tabs';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { FileUploadModule } from 'ng2-file-upload';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
-
+import { PaginationModule } from 'ngx-bootstrap/pagination';
+import { ButtonsModule } from 'ngx-bootstrap/buttons';
+import { TimeagoModule } from "ngx-timeago";
 
 
 @NgModule({
@@ -19,6 +21,9 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
     NgxSpinnerModule.forRoot({type: "line-spin-clockwise-fade"}), //To use the angular spinner to show loading screen 
     FileUploadModule,
     BsDatepickerModule.forRoot(), //For the date picker - GOTO: STUDY NOTES: TYPE - DATE (1)
+    PaginationModule.forRoot(), //For the pagination - GOTO: STUDY NOTES - Pagination 
+    ButtonsModule, //For the Members page to set the orderBy property
+    TimeagoModule.forRoot() //For formatting the dates to 'x minutes ago' - GOTO: STUDY NOTES Below 
   ],
   //As this is the 'sharedModule component' which we need to load in the app.component.ts, then the modules above, must also be included 
   //here to be used outside this module. 
@@ -28,7 +33,10 @@ import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
     TabsModule,
     NgxSpinnerModule,
     FileUploadModule,
-    BsDatepickerModule
+    BsDatepickerModule,
+    PaginationModule,
+    ButtonsModule,
+    TimeagoModule
   ]
 })
 export class SharedModule { }
@@ -92,5 +100,19 @@ export class SharedModule { }
       3. No need to specify the @ when installing it through npm 
       4. Taking the code from the valor page, we can copy paste the code, make sure to do the necessary changes, other than that the variables must be the same. 
       5. Initialization and more notes on photo-editor.component (html and ts)
+
+    6. PaginationModule
+      1. Connected to the pagination for the client site 
+      2. It creates the component for the client to interact with 
+      3. https://valor-software.com/ngx-bootstrap/#/components/pagination?tab=api
+
+    7. TimeAgoModule
+      1. Used on the member-detail.component.html 
+      2. To set how many 'hours, minutes, seconds' ago from the last time the timestamp was updated.
+      3. https://www.npmjs.com/package/ngx-timeago
+      4. All modules unless their are built for standlaone component arcitecture from the get go, must be initialized in a module which is invoked from the app module itself. 
+      5. You can expand the functionality to display the number of seconds by converting to UTC time
+        1. This can be achieved by adding a Z at the end of the time. 
+        2. On member-detail.component.html > <p>{{member.lastActive + 'Z' | timeago}}</p>
 
 */

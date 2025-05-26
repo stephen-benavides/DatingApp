@@ -1,8 +1,12 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { inject, Injectable, signal } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Member } from '../_models/member';
-import { map, of } from 'rxjs';
+import { map, of, take } from 'rxjs';
+import { PaginatedResult } from '../_models/paginations';
+import { UserParams } from '../_models/userParams';
+import { AccountService } from './account.service';
+import { User } from '../_models/User';
 
 @Injectable({
   providedIn: 'root'
@@ -14,38 +18,166 @@ export class MembersService {
 
   //Loading data into members array, so we can keep its data throughout the live of the execution
   members: Member[] = [];
+  //Map that contains the members for caching pagination 
+  membersCached = new Map();
 
+  //Store the pagination result (STUDY NOTES - PAGINATION)
+  /* Final Replaced: Replaced by invoking the method inside the getPaginatedResult<T> for reusability
+  paginationResult: PaginatedResult<Member[]> = new PaginatedResult<Member[]> // Replaced by Signal() but same functionality 
+  //paginatedResult = signal<PaginatedResult<Member[]> | null>(null) //initialized as null
+  */
+  
+  //Adding the 2 properties that are needed for the AccountService injection to get access to the user. 
+  userParams: UserParams | undefined;
+  user: User | undefined;
+  
   //Injecting http service
-  constructor(private http: HttpClient) { }
-
-
-  //Get all Members, need to pass thw JWT bearer token as options to authenthicate, as requested by the server.  
-  //https://localhost:5001/api/users
-  getMembers(){
-    /* the 'options' in the request are handled by jwt.interceptor.ts now
-    return this.http.get<Member[]>(this.baseUrl + 'users', this.getHttpOptions());
-    */
-
-    // CACHING (GOTO - Notes Below) - Check if the members array is not empty (has data) to return it as an observable 
-    if(this.members.length > 0){
-      //Of makes it so any value in the method is an observable
-      return of(this.members);
-    }
-    return this.http.get<Member[]>(this.baseUrl + 'users').pipe( //options are handled by the interceptor
-      //Using RxJS to map the data from the member that we are getting to the members[] property above
-      map((members) => {
-        this.members = members; 
-        //When you use RxJS you must always return the data that you are intercepting 
-        return members; 
+  //private http = inject(HttpClient); // You can inject dependencies through either constructor or this inject() method
+  constructor(private http: HttpClient, private accountService: AccountService) { 
+    //You can inject services to other services as long as you dont create a circular reference by injecting the memberService into the AccountService. It won't work.
+    this.accountService.currentUser$.pipe(take(1)).subscribe({
+      //When subscribing we get the user, if it exists, then initialize the UserParams class with the user. ANd, get the user object as well
+      next: (user) => {
+        if (user) {
+          this.userParams = new UserParams(user);
+          this.user = user;
+        }
       }
-    )); 
+    })
   }
 
+  //Helper methods to get and set the user parameters, which can be used on the component to get the params information throughout all components that use this service.
+    // We are storing everything in the service layer to avoid multiple calls to the API.
+  gerUserParams() {
+    return this.userParams;
+  }
+  setUserParams(params: UserParams) {
+    this.userParams = params;
+  }
+  resetUserParams() {
+    //check if we have the user to create a new instance with the default user params 
+    if (this.user) {
+      this.userParams = new UserParams(this.user);
+      return this.userParams;
+    }
+    return;
+  }
+  
+
+
+  //#region Original getMembers() method without pagination  
+  ////Get all Members, need to pass thw JWT bearer token as options to authenthicate, as requested by the server.  
+  ////https://localhost:5001/api/users
+  //getMembers(){
+  //  /* the 'options' in the request are handled by jwt.interceptor.ts now
+  //  return this.http.get<Member[]>(this.baseUrl + 'users', this.getHttpOptions());
+  //  */
+//
+  //  // CACHING (GOTO - Notes Below) - Check if the members array is not empty (has data) to return it as an observable 
+  //  if(this.members.length > 0){
+  //    //Of makes it so any value in the method is an observable
+  //    return of(this.members);
+  //  }
+  //  return this.http.get<Member[]>(this.baseUrl + 'users').pipe( //options are handled by the interceptor
+  //    //Using RxJS to map the data from the member that we are getting to the members[] property above
+  //    map((members) => {
+  //      this.members = members; 
+  //      //When you use RxJS you must always return the data that you are intercepting 
+  //      return members; 
+  //    }
+  //    )); 
+  //}
+  //#endregion
+
+
+  //getMember with pagination implemented (STUDY NOTES - PAGINATION (7) )
+  getMembers(userParams: UserParams) {
+    //console.log(Object.values(userParams).join('-'));
+    //Check if we have captured the cached response
+    const cachedResponse = this.membersCached.get(Object.values(userParams).join('-'))
+    if (cachedResponse)
+      return of(cachedResponse);
+
+    //Convert all parameters into a Http Params object 
+    let params = this.getPaginationHeaders(userParams.pageNumber, userParams.pageSize);
+    //Adding additional filters to the HttpParams string
+    params = params.append('minAge', userParams.minAge);
+    params = params.append('maxAge', userParams.maxAge);
+    params = params.append('gender', userParams.gender);
+    params = params.append('orderBy', userParams.orderBy);
+
+    return this.getPaginatedResults<Member[]>(this.baseUrl + 'users', params).pipe(
+      map(response => {
+        //Using the pipe to use the map RxJS function - to store the response for the specified parameters into the membersCached Map collection
+        this.membersCached.set(Object.values(userParams).join('-'), response)
+        return response;
+      })
+    )
+  }
+  ///Generic method to return paginated results based on user parameters
+  private getPaginatedResults<T>(url: string, params: HttpParams) {
+    const paginationResult: PaginatedResult<T> = new PaginatedResult<T>;
+
+    //Notes - PAGINATION (7)
+    //Previously <T> was Member[]. Updated to make it reusable
+    return this.http.get<T>(url, { observe: 'response', params }).pipe(
+      //Using the map to put the elements comming from the response into an object in this page
+      map(response => {
+        //If we have a body in the response - load it into the paginationResult object 
+        if (response.body) {
+          paginationResult.result = response.body;
+        }
+        //Get the response header from the server - the name in the server must be the same (API.Extensions > HttpExtensions> AddPaginationHeader())
+        const pagination = response.headers.get('Pagination');
+
+        if (pagination) {
+          //We must serialize the object into JSON format so we can use it in the front end 
+          paginationResult.pagination = JSON.parse(pagination);
+        }
+        //In a map you must always return the object you are mapping 
+        return paginationResult;
+      })
+    );
+  }
+
+  private getPaginationHeaders(pageNumber: number, pageSize: number) {
+    //Angular class that allow us to obtain the parameters from the query string 
+    //Utility class from angular - which allow us to set query string parameters along with our http requests 
+    let params = new HttpParams();
+    //if we have the page and itemsPerPage comming in from the client, then pass that data in the query string
+    if (pageNumber && pageSize) {
+      //This must have the same name as what is expected by the server 
+      params = params.append('pageNumber', pageNumber);
+      params = params.append('pageSize', pageSize);
+    }
+    return params;
+  }
+
+  getMember(username: string) {
+    //Using the cached member array to avoid makaing the call back to the API
+    /*
+      * Using the spread operator (notes below) to create a new array that grows every time the user paginates to a new page to stores the results.
+          Returns an array named result inside an array which is the main body
+      * Using reduce() - a CallBack function (functions that can be either anonymous {} or not), in this case the initial value is an empty array where we are going to be putting all values from the previous result array to reduce the number of nested arrays
+          Returns an array without the 'result' just a simple array with all the values added as is
+      * Using find() to get the specific member from the list of cached members to avoid making the call to the DB if this member is found.
+    */
+    const member = [...this.membersCached.values()]
+      .reduce((previousVal, currentVal) => previousVal.concat(currentVal.result), [])
+      .find((member: Member) => member.userName === username);
+    //console.log(member);
+    if (member) return of(member);
+
+    return this.http.get<Member>(this.baseUrl + 'users/' + username);
+  }
+  
+  //#region Replaced By using the membersCached Array instead of the simple member[] we had before. 
+  /* 
   //get a single member, same JWT 
   getMember(username: string){
-    /* the 'options' in the request are handled by jwt.interceptor.ts now
-    return this.http.get<Member>(this.baseUrl + 'user/' + username, this.getHttpOptions());
-    */
+    // the 'options' in the request are handled by jwt.interceptor.ts now
+        //return this.http.get<Member>(this.baseUrl + 'user/' + username, this.getHttpOptions());
+    
     //If we get a member, it should be one from the list of members, therefore if the username matches, return the same member, else go to the DB
     const member = this.members.find(member => member.userName === username);
     if(member){
@@ -54,9 +186,11 @@ export class MembersService {
 
    return this.http.get<Member>(this.baseUrl + 'users/' + username)
   }
+  */
+  //#endregion
+
 
   //#region Options to get JWT Authorization Token - Replaced by _interceptors > jwt.interceptor.ts
-
   //Temporary method to get the JWT token for the authenthication to the server
 
   // getHttpOptions(){
@@ -158,5 +292,25 @@ STUDY NOTES - DATA CACHING
       2. Simplicity and Readability: It offers a concise and readable way to merge objects or arrays. 
       Instead of manually assigning each property, the spread operator allows for easily combining objects.
     
+    
+    
+    
+    STUDY NOTES - PAGINATION (7) - Client Side 
+      1. We are creating modifying the get members method to obtain a paginated method which is going to be more efficient. 
+      2. We are updating the method signature of the getMembers() in order to pass the parameters that are expected for the pagination 
+        1. Parameters from the server side can be found in API.Helpers > UserParams.cs
+          getMembers(page?: number, itemsPerPage?: number)
+          1. They are both optional because we already have default values in the server
+
+      3. As we need to get the params for the response, we must do changes to the GET method 
+        1. return this.http.get<Member[]>(this.baseUrl + 'users').pipe(
+          1. the get by default gets the data from the body of the response and thats what is being returned - 
+            as we now we also need the entire response, we want to 'observe' the response. 
+            1. return this.http.get<Member[]>(this.baseUrl + 'users', {observe: 'response', params}).pipe( 
+            2. By also observing the response, we make sure to get the current params that were stated in the new method as well
+            3. This will allow us to get EVERYTHING from the response such as the Access-Control-Expose-Headers and the Pagination header - 
+              which is the same as what is returned in postman when invoking the method - in the headers of the response
+
+
 
 */
